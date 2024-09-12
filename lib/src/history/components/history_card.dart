@@ -30,7 +30,7 @@ class HistoryCard extends ConsumerWidget {
       ),
       child: ListTile(
         onTap: () => context.push(
-          '${RoutesDocument.qrDetails(item.id)}',
+          RoutesDocument.qrDetails(item.id),
           extra: item,
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: Insets.small + 2),

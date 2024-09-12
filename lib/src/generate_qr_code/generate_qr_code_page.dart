@@ -1,5 +1,6 @@
 import 'package:app/data/models/qr_data_model.dart';
 import 'package:app/data/providers/qr_data_provider.dart';
+import 'package:app/src/components/options_row.dart';
 import 'package:app/src/generate_qr_code/email_qr_code.dart';
 import 'package:app/src/generate_qr_code/generate_form_types/business_qr_code.dart';
 import 'package:app/src/generate_qr_code/generate_form_types/event_qr_code.dart';
@@ -12,11 +13,13 @@ import 'package:app/src/generate_qr_code/generate_form_types/wifi_qr_code.dart';
 import 'package:app/common_lib.dart';
 import 'package:app/utils/components/custom_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../data/models/qr_type_enum.dart';
 import '../../utils/components/custom_scaffold.dart';
+import '../components/show_qr_code_dialog.dart';
 import 'generate_form_types/generate_contact_qr_code.dart';
 import 'generate_form_types/text_and_internet_qr_code.dart';
 
@@ -31,6 +34,7 @@ class GenerateQrCodePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     FocusNode focusNode = FocusNode();
     final formKey = useMemoized(() => GlobalKey<FormState>());
+    final ScreenshotController screenshotController = ScreenshotController();
     Widget getForm() {
       switch (type) {
         case QRType.text:
@@ -103,9 +107,7 @@ class GenerateQrCodePage extends HookConsumerWidget {
           padding: const EdgeInsets.all(8.0),
           child: Container(
             width: 350,
-            padding: const EdgeInsets.symmetric(
-              vertical: 2,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 2),
             decoration: const BoxDecoration(
               color: Color(0xFFFDB623),
               borderRadius: BorderSize.extraSmallRadius,
@@ -119,14 +121,14 @@ class GenerateQrCodePage extends HookConsumerWidget {
               child: Column(
                 children: [
                   const Gap(Insets.extraLarge),
-                  type == QRType.location
-                      ? Image.asset(
-                          type.iconPath,
-                          height: 100,
-                        )
-                      : SvgPicture.asset(type.iconPath),
+                  SizedBox(
+                    height: 100, // Explicitly set height
+                    child: type == QRType.location
+                        ? Image.asset(type.iconPath)
+                        : SvgPicture.asset(type.iconPath),
+                  ),
                   const Gap(Insets.extraLarge),
-                  getForm(),
+                  getForm(), // Ensure getForm() does not use intrinsic size calculations
                   const Gap(Insets.extraLarge),
                   Container(
                     decoration: const BoxDecoration(boxShadow: [
@@ -136,30 +138,15 @@ class GenerateQrCodePage extends HookConsumerWidget {
                       onPressed: () async {
                         focusNode.unfocus();
                         if (formKey.currentState?.validate() ?? false) {
-                          final qrImage = PrettyQrView.data(
-                            data: qrData,
-                            decoration: const PrettyQrDecoration(),
-                          );
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              backgroundColor: Colors.white,
-                              content: qrImage,
-                              actions: [
-                                IconButton(
-                                    onPressed: () {}, icon: const Icon(Icons.save)),
-                                IconButton(onPressed: () {}, icon: const Icon(Icons.save))
-                              ],
-                            ),
-                          );
+                          final item = QrDataModel(
+                              id: const Uuid().v4(),
+                              data: qrData,
+                              date: DateTime.now(),
+                              type: type.name);
+                          showQrdataDialog(context, screenshotController, item);
+                          // ignore: unused_result
+                          ref.read(addQRDataProvider.notifier).addQRdata(item);
                         }
-                        print(type.name);
-
-                        ref.read(addQRDataProvider.notifier).addQRdata(QrDataModel(
-                            id: const Uuid().v4(),
-                            data: qrData,
-                            date: DateTime.now(),
-                            type: type.name));
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFDB623),

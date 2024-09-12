@@ -72,5 +72,13 @@
     <true/>
 </dict>
 
+
+<!-- These two bello is for accessing the storage -->
+<key>NSPhotoLibraryUsageDescription</key>
+<string>App needs access to the photo library.</string>
+<key>NSDocumentsFolderUsageDescription</key>
+<string>App needs access to documents folder.</string>
+
+
 </dict>
 </plist>

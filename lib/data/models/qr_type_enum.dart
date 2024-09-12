@@ -1,3 +1,5 @@
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../utils/constants/assets.dart';
 
 enum QRType {
@@ -26,6 +28,60 @@ enum QRType {
 
   @override
   String toString() => name;
+}
+
+Future<void> launchApp(String data) async {
+  final type = handleQRCode(data);
+
+  switch (type) {
+    case QRType.twitter:
+    case QRType.instagram:
+    case QRType.website:
+      if (await canLaunchUrl(Uri.parse(data))) {
+        await launchUrl(Uri.parse(data));
+      } else {
+        print('Could not launch $data');
+      }
+      break;
+
+    case QRType.phoneNumber:
+      // Dial phone number
+      final telUri = Uri(scheme: 'tel', path: data);
+      if (await canLaunchUrl(telUri)) {
+        await launchUrl(telUri);
+      } else {
+        throw 'Could not dial $data';
+      }
+      break;
+
+    case QRType.email:
+      // Open email app
+      final emailUri = Uri(scheme: 'mailto', path: data);
+      if (await canLaunchUrl(emailUri)) {
+        await launchUrl(emailUri);
+      } else {
+        throw 'Could not open email $data';
+      }
+      break;
+
+    case QRType.location:
+      // Open maps app with location
+      final locationUri = Uri.parse("geo:$data");
+      if (await canLaunchUrl(locationUri)) {
+        await launchUrl(locationUri);
+      } else {
+        throw 'Could not open location $data';
+      }
+      break;
+
+    case QRType.text:
+      print('Scanned text: $data');
+      break;
+
+    default:
+      print('Unhandled QR type: $type with data: $data');
+      break;
+  }
 }
 
 extension QRTypeIconExtension on QRType {

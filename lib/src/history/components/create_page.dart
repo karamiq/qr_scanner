@@ -2,7 +2,6 @@ import 'package:app/src/components/custom_bottom_navigation_bar.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../common_lib.dart';
@@ -66,27 +65,26 @@ class CreatePage extends HookConsumerWidget {
                   ]),
                   child: ElevatedButton(
                     onPressed: () {
-                      DelightToastBar(
-                        autoDismiss: true,
-                        position: DelightSnackbarPosition.top,
-                        snackbarDuration: const Duration(milliseconds: 1700),
-                        builder: (context) => Container(
-                          padding: Insets.mediumAll,
-                          margin: Insets.smallAll,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF3B3B3B),
-                            borderRadius: BorderSize.extraSmallRadius,
-                          ),
-                          child: const Text(
-                            "The contact has been added to history list successfully",
-                            style: TextStyle(
-                              color: Color(0xFFFDB623),
+                      if (formKey.currentState!.validate()) {
+                        DelightToastBar(
+                          autoDismiss: true,
+                          position: DelightSnackbarPosition.top,
+                          snackbarDuration: const Duration(milliseconds: 1700),
+                          builder: (context) => Container(
+                            padding: Insets.mediumAll,
+                            margin: Insets.smallAll,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF3B3B3B),
+                              borderRadius: BorderSize.extraSmallRadius,
+                            ),
+                            child: const Text(
+                              "The contact has been added to history list successfully",
+                              style: TextStyle(
+                                color: Color(0xFFFDB623),
+                              ),
                             ),
                           ),
-                        ),
-                      ).show(context);
-
-                      if (formKey.currentState!.validate()) {
+                        ).show(context);
                         focusNode.unfocus();
                         ref.read(addQRDataProvider.notifier).addQRdata(QrDataModel(
                             id: const Uuid().v4(),

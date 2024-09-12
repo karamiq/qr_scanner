@@ -1,13 +1,21 @@
 import 'package:app/data/models/qr_data_model.dart';
+import 'package:app/data/models/qr_type_enum.dart';
+import 'package:app/router/deep_link.dart';
+import 'package:app/src/generate_qr_code/generate_qr_code_page.dart';
 import 'package:app/utils/components/custom_app_bar.dart';
 import 'package:app/utils/components/custom_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
+import 'package:screenshot/screenshot.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../common_lib.dart';
+import '../components/options_row.dart';
 import '../components/qr_icon_option.dart';
+import 'package:share_plus/share_plus.dart';
 
 class QrCodeDetailes extends StatelessWidget {
   const QrCodeDetailes({
@@ -18,25 +26,30 @@ class QrCodeDetailes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ScreenshotController screenshotController = ScreenshotController();
+
     return CustomScaffold(
         body: ColumnPadded(
       gap: Insets.medium,
       children: [
         const CustomAppBar(title: 'Result'),
         const Gap(Insets.extraLarge),
-        Container(
-          height: 250,
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderSize.extraSmallRadius,
-              border: Border.all(color: const Color(0xFFFDB623), width: 4)),
-          child: QrImageView(
-            gapless: false,
-            dataModuleStyle:
-                const QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square),
-            foregroundColor: Colors.black,
-            data: item.data,
-            version: QrVersions.auto,
+        Screenshot(
+          controller: screenshotController,
+          child: Container(
+            height: 250,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderSize.extraSmallRadius,
+                border: Border.all(color: const Color(0xFFFDB623), width: 4)),
+            child: QrImageView(
+              gapless: false,
+              dataModuleStyle:
+                  const QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square),
+              foregroundColor: Colors.black,
+              data: item.data,
+              version: QrVersions.auto,
+            ),
           ),
         ),
         const Gap(Insets.extraLarge),
@@ -45,7 +58,7 @@ class QrCodeDetailes extends StatelessWidget {
           padding: Insets.smallAll,
           decoration: const BoxDecoration(
             borderRadius: BorderSize.extraSmallRadius,
-            color: Color(0xFFF3C3C3C),
+            color: Color(0xFF3C3C3C),
           ),
           child: ColumnPadded(
             gap: Insets.extraSmall,
@@ -92,31 +105,18 @@ class QrCodeDetailes extends StatelessWidget {
               ),
               Align(
                   alignment: Alignment.center,
-                  child: TextButton(onPressed: () {}, child: const Text('Open'))),
+                  child: TextButton(
+                      onPressed: () async {
+                        await launchApp(item.data);
+                      },
+                      child: const Text('Open'))),
             ],
           ),
         ),
         const Gap(Insets.extraSmall),
-        RowPadded(
-          gap: Insets.extraLarge,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            QRIconOption(
-              icon: Icons.share,
-              text: 'Share',
-              onPressed: () {},
-            ),
-            QRIconOption(
-              icon: Icons.file_copy,
-              text: 'Copy',
-              onPressed: () {},
-            ),
-            QRIconOption(
-              icon: Icons.save,
-              text: 'Save',
-              onPressed: () {},
-            ),
-          ],
+        OptionsRow(
+          item: item,
+          screenshotController: screenshotController,
         ),
       ],
     ));

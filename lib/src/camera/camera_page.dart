@@ -8,9 +8,7 @@ import 'package:app/src/components/scan_button.dart';
 import 'package:app/src/settings/settings_page.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_link_previewer/flutter_link_previewer.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vibration/vibration.dart';
 
@@ -33,7 +31,6 @@ class _CameraPageState extends ConsumerState<CameraPage>
   late MobileScannerController cameraController;
   final _audioPlayer = AudioPlayer();
   dynamic previewData;
-  bool isDialogShowing = false;
   String? url;
   double zoomLevel = 0.0;
 
@@ -52,75 +49,42 @@ class _CameraPageState extends ConsumerState<CameraPage>
     _audioPlayer.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    cameraController.start();
+  }
+
   void captureCode(capture) async {
     final List<Barcode> barcodes = capture.barcodes;
     url = barcodes.first.rawValue;
-    if (barcodes.isNotEmpty &&
-        !isDialogShowing &&
-        ref.watch(currentPageIndexProvider) == 1) {
-      setState(() => isDialogShowing = true);
-      final state = await ref.read(addQRDataProvider.notifier).addQRdata(QrDataModel(
+    if (barcodes.isNotEmpty && ref.watch(currentPageIndexProvider) == 1) {
+      final item = QrDataModel(
           id: const Uuid().v4(),
           data: url!,
           date: DateTime.now(),
-          type: handleQRCode(url!).toString()));
+          type: handleQRCode(url!).toString());
+      final state = await ref.read(addQRDataProvider.notifier).addQRdata(item);
 
       state.isLoading;
 
-      showDialog(
-        context: context,
-        builder: (context) => StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-              contentPadding: const EdgeInsets.only(top: 20, right: 20, left: 20),
-              actionsAlignment: MainAxisAlignment.start,
-              actions: [
-                TextButton(
-                    onPressed: () async => await launchUrl(Uri.parse(url!)),
-                    child: const Text(
-                      'Open',
-                      style: TextStyle(color: Colors.blueAccent),
-                    )),
-                TextButton(
-                    onPressed: () => context.pop(),
-                    child: const Text(
-                      'Close',
-                      style: TextStyle(color: Colors.blueAccent),
-                    ))
-              ],
-              content: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: SizedBox(
-                  height: 210,
-                  child: Card(
-                    child: LinkPreview(
-                      enableAnimation: true,
-                      onLinkPressed: (url) async => await launchUrl(Uri.parse(url)),
-                      onPreviewDataFetched: (data) {
-                        setState(() => previewData = data);
-                      },
-                      previewData: previewData,
-                      text: barcodes.first.rawValue ?? "",
-                      width: MediaQuery.of(context).size.width,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ).then((_) {
+      context
+          .push(
+        RoutesDocument.qrDetails(item.id),
+        extra: item,
+      )
+          .then((_) {
         setState(() {
-          isDialogShowing = false;
+          cameraController.start();
         });
       });
+
       if (await ref.watch(getBeepProvider.future)) {
         _audioPlayer.play(AssetSource('sounds/short-beep-tone.mp3'));
       }
 
       if (await ref.watch(getVibrationProvider.future)) {
-        Vibration.vibrate(amplitude: -20);
+        Vibration.vibrate(amplitude: 1);
       }
     }
   }
