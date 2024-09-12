@@ -91,11 +91,16 @@ class _CameraPageState extends ConsumerState<CameraPage>
   }
 
   void _selectImageFromGallery() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      // final result = await MobileScanner().scanFile(image.path);
-      // captureCode(result);
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        final capture = await cameraController.analyzeImage(image.path);
+        captureCode(capture);
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print(e.toString());
     }
   }
 
@@ -121,41 +126,38 @@ class _CameraPageState extends ConsumerState<CameraPage>
                   ? SafeArea(
                       child: Column(
                         children: [
-                          Padding(
-                            padding: EdgeInsets.all(20),
-                            child: ClipRRect(
-                              borderRadius: BorderSize.extraSmallRadius,
-                              child: BottomAppBar(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: Insets.medium),
-                                color: const Color(0xFF333333).withOpacity(.8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    IconButton(
-                                      onPressed: _selectImageFromGallery,
-                                      icon: const Icon(
-                                        Icons.photo_library,
-                                        color: Color(0xFFD9D9D9),
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: _toggleFlash,
-                                      icon: const Icon(
-                                        Icons.flash_on,
-                                        color: Color(0xFFD9D9D9),
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: _flipCamera,
-                                      icon: const Icon(
-                                        Icons.flip_camera_android,
-                                        color: Color(0xFFD9D9D9),
-                                      ),
-                                    ),
-                                  ],
+                          Container(
+                            margin: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: Insets.medium, vertical: Insets.small),
+                            decoration: const BoxDecoration(
+                                color: Color(0xFF333333),
+                                borderRadius: BorderSize.extraSmallRadius),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                IconButton(
+                                  onPressed: _selectImageFromGallery,
+                                  icon: const Icon(
+                                    Icons.photo_library,
+                                    color: Color(0xFFD9D9D9),
+                                  ),
                                 ),
-                              ),
+                                IconButton(
+                                  onPressed: _toggleFlash,
+                                  icon: const Icon(
+                                    Icons.flash_on,
+                                    color: Color(0xFFD9D9D9),
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: _flipCamera,
+                                  icon: const Icon(
+                                    Icons.flip_camera_android,
+                                    color: Color(0xFFD9D9D9),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           const Gap(120),
