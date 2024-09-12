@@ -1,8 +1,5 @@
-import 'package:app/data/services/local_services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../common_lib.dart';
 import '../../../data/models/qr_data_model.dart';

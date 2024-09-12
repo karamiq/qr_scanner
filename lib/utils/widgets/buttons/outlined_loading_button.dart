@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 class OutlinedLoadingButton extends StatelessWidget {
-  const OutlinedLoadingButton({
-    super.key,
-    required this.isLoading,
-    required this.child,
-    required this.onPressed,
-    this.progressIndicatorColor
-  });
+  const OutlinedLoadingButton(
+      {super.key,
+      required this.isLoading,
+      required this.child,
+      required this.onPressed,
+      this.progressIndicatorColor});
 
   final bool isLoading;
   final Widget child;

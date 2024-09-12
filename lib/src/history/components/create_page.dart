@@ -86,6 +86,7 @@ class CreatePage extends HookConsumerWidget {
                           ),
                         ).show(context);
                         focusNode.unfocus();
+                        // ignore: unused_result
                         ref.read(addQRDataProvider.notifier).addQRdata(QrDataModel(
                             id: const Uuid().v4(),
                             data: textController.text,

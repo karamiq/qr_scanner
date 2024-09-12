@@ -1,6 +1,5 @@
 import 'package:app/data/models/qr_data_model.dart';
 import 'package:app/data/providers/qr_data_provider.dart';
-import 'package:app/src/components/options_row.dart';
 import 'package:app/src/generate_qr_code/email_qr_code.dart';
 import 'package:app/src/generate_qr_code/generate_form_types/business_qr_code.dart';
 import 'package:app/src/generate_qr_code/generate_form_types/event_qr_code.dart';
@@ -13,7 +12,6 @@ import 'package:app/src/generate_qr_code/generate_form_types/wifi_qr_code.dart';
 import 'package:app/common_lib.dart';
 import 'package:app/utils/components/custom_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:uuid/uuid.dart';
 

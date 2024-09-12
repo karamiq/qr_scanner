@@ -43,7 +43,7 @@ class GenerateInternetQRCode extends HookWidget {
           const Text('Website URL'),
           const Gap(Insets.small),
           CustomTextFormField(
-            onChanged: (value) => onChange!(value ?? ''),
+            onChanged: (value) => onChange!('https://$value'),
             controller: textEditingController,
             hintText: 'www.qrcode.com',
             validator: context.validator.required().build(),
