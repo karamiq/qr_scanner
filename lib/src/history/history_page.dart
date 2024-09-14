@@ -8,13 +8,30 @@ import '../../common_lib.dart';
 import '../../utils/components/scaffold_decoration.dart';
 import 'components/scan_page.dart';
 
-class HistoryPage extends ConsumerWidget {
-  const HistoryPage({super.key, required this.tabController});
-
-  final TabController tabController;
+class HistoryPage extends ConsumerStatefulWidget {
+  const HistoryPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HistoryPage> createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends ConsumerState<HistoryPage>
+    with SingleTickerProviderStateMixin {
+  late TabController tabController;
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    tabController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     int pageIndex = ref.watch(currentPageIndexProvider);
     return AnimatedPositioned(
       top: 0,

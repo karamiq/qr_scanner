@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../common_lib.dart';
@@ -38,14 +37,18 @@ Future<void> launchApp(String data) async {
     case QRType.instagram:
     case QRType.phoneNumber:
     case QRType.location:
-      await launchUrl(Uri.parse(data));
+      try {
+        await launchUrl(Uri.parse(data));
+        // ignore: empty_catches
+      } catch (e) {}
       break;
     case QRType.contact:
     case QRType.business:
       try {
         final url = Uri.encodeComponent(data);
-        launchUrl(Uri.parse(url));
-      } catch (e) {
+
+        launchUrl(Uri.parse('content://contacts/people/'));
+      } on PlatformException catch (e) {
         print(e.toString());
       }
     case QRType.text:

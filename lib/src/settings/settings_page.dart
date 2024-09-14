@@ -1,5 +1,7 @@
+import 'package:app/data/providers/qr_data_provider.dart';
 import 'package:app/data/shared_preference/preferences.dart';
 import 'package:app/common_lib.dart';
+import 'package:app/src/components/qr_icon_option.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,7 +17,7 @@ class SettingsPage extends ConsumerWidget {
     return Scaffold(
         backgroundColor: const Color(0xFF525252),
         body: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: Insets.medium),
             child: ColumnPadded(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +36,7 @@ class SettingsPage extends ConsumerWidget {
                   onPressed: () => context.pop(),
                   icon: SvgPicture.asset(Assets.assetsSvgArrowBack),
                 ),
-                const Gap(Insets.extraLarge),
+                const Gap(Insets.small),
                 const Text(
                   'Settings',
                   style: TextStyle(color: Color(0xFFFDB623), fontSize: 26),
@@ -63,7 +65,17 @@ class SettingsPage extends ConsumerWidget {
                     prefs.setBool(Preferences.beep, p0);
                   },
                 ),
-                const Gap(Insets.extraLarge),
+                const Gap(Insets.small),
+                Row(
+                  children: [
+                    QRIconOption(
+                        icon: Icons.delete_forever,
+                        text: 'Clear History',
+                        onPressed: () =>
+                            ref.read(deleteQRDataProviderProvider.notifier).deleteTable())
+                  ],
+                ),
+                const Gap(Insets.small),
                 const Text(
                   'Support',
                   style: TextStyle(color: Color(0xFFFDB623), fontSize: 26),
@@ -92,6 +104,7 @@ class SettingsPage extends ConsumerWidget {
                   useSwitch: false,
                   onTap: () {},
                 ),
+                const Gap(Insets.medium),
               ],
             ),
           ),

@@ -34,18 +34,18 @@ Stream<List<QrDataModel>> getQRDataHistory(GetQRDataHistoryRef ref) async* {
 class DeleteQRDataProvider extends _$DeleteQRDataProvider with AsyncXNotifierMixin<void> {
   @override
   Future<AsyncX<void>> build() => idle();
+
   @useResult
   RunXCallback<void> deleteTable() => handle(() async {
         final db = await _getDatabase();
-        await db.execute('DROP TABLE IF EXISTS scanned_qr_codes');
+        await db.execute('DELETE FROM scanned_qr_codes');
         return;
       });
 }
 
 Future<Database> _getDatabase() async {
   final dbPath = await sql.getDatabasesPath();
-  final db = await sql.openDatabase(
-      path.join(dbPath, 'lib', 'data', 'services', 'databaseses', 'scanned_qr_codes.db'),
+  final db = await sql.openDatabase(path.join(dbPath, 'scanned_qr_codes.db'),
       onCreate: (db, version) {
     return db.database.execute(
         'CREATE TABLE scanned_qr_codes(id TEXT PRIMARY KEY, data TEXT, date TEXT, type TEXT)');

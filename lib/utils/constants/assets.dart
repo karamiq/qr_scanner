@@ -54,6 +54,10 @@ class Assets {
   /// assets/images/qr-leading.png
   static const String assetsImagesQrLeading = "assets/images/qr-leading.png";
 
+  /// Assets for assetsImagesSplashAppIcon
+  /// assets/images/splash-app-icon.png
+  static const String assetsImagesSplashAppIcon = "assets/images/splash-app-icon.png";
+
   /// Assets for assetsImagesText
   /// assets/images/text.png
   static const String assetsImagesText = "assets/images/text.png";

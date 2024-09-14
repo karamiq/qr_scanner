@@ -11,109 +11,96 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vibration/vibration.dart';
-
 import '../components/custom_bottom_navigation_bar.dart';
 import '../generate/generate_page.dart';
 import '../history/history_page.dart';
 import 'components/scan_spot.dart';
 
-class CameraPage extends ConsumerStatefulWidget {
+class CameraPage extends HookConsumerWidget {
   const CameraPage({super.key});
 
   @override
-  createState() => _CameraPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    AudioPlayer audioPlayer = AudioPlayer();
+    final isFlashOn = useState<bool>(false);
+    final zoomLevel = useState<double>(0.0);
+    final showResult = useState<bool>(true);
+    final isFrontCamera = useState<bool>(false);
+    final pageIndex = ref.watch(currentPageIndexProvider);
+    final cameraController = MobileScannerController();
+    String? url;
 
-class _CameraPageState extends ConsumerState<CameraPage>
-    with SingleTickerProviderStateMixin {
-  int get pageIndex => ref.watch(currentPageIndexProvider);
-  late TabController _tabController;
-  late MobileScannerController cameraController;
-  final _audioPlayer = AudioPlayer();
-  dynamic previewData;
-  String? url;
-  double zoomLevel = 0.0;
+    useEffect(() {
+      return () {
+        cameraController.dispose();
+      };
+    }, [cameraController]);
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    cameraController = MobileScannerController();
-  }
+    void captureCode(BarcodeCapture? capture) async {
+      if (capture == null) return;
+      final List<Barcode> barcodes = capture.barcodes;
+      url = barcodes.first.rawValue;
+      if (barcodes.isNotEmpty && pageIndex == 1 && showResult.value == true) {
+        showResult.value = false;
+        final item = QrDataModel(
+            id: const Uuid().v4(),
+            data: url!,
+            date: DateTime.now(),
+            type: handleQRCode(url!).toString());
+        final state = await ref.read(addQRDataProvider.notifier).addQRdata(item);
 
-  @override
-  void dispose() {
-    cameraController.dispose();
-    _tabController.dispose();
-    super.dispose();
-    _audioPlayer.dispose();
-  }
+        state.isLoading;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    cameraController.start();
-  }
-
-  void captureCode(capture) async {
-    final List<Barcode> barcodes = capture.barcodes;
-    url = barcodes.first.rawValue;
-    if (barcodes.isNotEmpty && ref.watch(currentPageIndexProvider) == 1) {
-      cameraController.stop();
-      final item = QrDataModel(
-          id: const Uuid().v4(),
-          data: url!,
-          date: DateTime.now(),
-          type: handleQRCode(url!).toString());
-      final state = await ref.read(addQRDataProvider.notifier).addQRdata(item);
-
-      state.isLoading;
-
-      context
-          .push(
-        RoutesDocument.qrDetails(item.id),
-        extra: item,
-      )
-          .then((_) {
-        setState(() {
-          cameraController.start();
+        context
+            .push(
+          RoutesDocument.qrDetails(item.id),
+          extra: item,
+        )
+            .then((_) {
+          showResult.value = true;
         });
-      });
-
-      if (await ref.watch(getBeepProvider.future)) {
-        _audioPlayer.play(AssetSource('sounds/short-beep-tone.mp3'));
-      }
-
-      if (await ref.watch(getVibrationProvider.future)) {
-        Vibration.vibrate(amplitude: 1, duration: 100);
+        if (await ref.watch(getBeepProvider.future)) {
+          audioPlayer.play(AssetSource('sounds/short-beep-tone.mp3'));
+        }
+        if (await ref.watch(getVibrationProvider.future)) {
+          Vibration.vibrate(amplitude: 1, duration: 100);
+        }
       }
     }
-  }
 
-  void _selectImageFromGallery() async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        final capture = await cameraController.analyzeImage(image.path);
-        captureCode(capture);
+    void selectImageFromGallery() async {
+      try {
+        final ImagePicker picker = ImagePicker();
+        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+        if (image != null) {
+          final capture = await cameraController.analyzeImage(image.path);
+          captureCode(capture);
+        }
+      } catch (e) {
+        // ignore: avoid_print
+        print(e.toString());
       }
-    } catch (e) {
-      // ignore: avoid_print
-      print(e.toString());
     }
-  }
 
-  void _toggleFlash() {
-    cameraController.toggleTorch();
-  }
+    void toggleFlash() async {
+      if (isFrontCamera.value) {
+        // Prevent flash toggle if camera is flipped
+        return;
+      }
+      if (isFlashOn.value) {
+        await cameraController.toggleTorch();
+        isFlashOn.value = false;
+      } else {
+        await cameraController.toggleTorch();
+        isFlashOn.value = true;
+      }
+    }
 
-  void _flipCamera() {
-    cameraController.switchCamera();
-  }
+    void flipCamera() async {
+      await cameraController.switchCamera();
+      isFrontCamera.value = !isFrontCamera.value;
+    }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: false,
@@ -122,6 +109,26 @@ class _CameraPageState extends ConsumerState<CameraPage>
           alignment: Alignment.topCenter,
           children: [
             MobileScanner(
+              errorBuilder: (context, error, child) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(error.toString()),
+                    ElevatedButton(
+                        onPressed: () async {
+                          await cameraController.stop();
+                          await cameraController.start();
+                        },
+                        child: const Text('Try again')),
+                    Container(
+                      color: Colors.red,
+                      height: 250,
+                      width: 250,
+                      child: child,
+                    )
+                  ],
+                ),
+              ),
               overlayBuilder: (context, constraints) => pageIndex == 1
                   ? SafeArea(
                       child: Column(
@@ -137,24 +144,28 @@ class _CameraPageState extends ConsumerState<CameraPage>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 IconButton(
-                                  onPressed: _selectImageFromGallery,
+                                  onPressed: selectImageFromGallery,
                                   icon: const Icon(
                                     Icons.photo_library,
                                     color: Color(0xFFD9D9D9),
                                   ),
                                 ),
                                 IconButton(
-                                  onPressed: _toggleFlash,
-                                  icon: const Icon(
-                                    Icons.flash_on,
-                                    color: Color(0xFFD9D9D9),
+                                  onPressed: toggleFlash,
+                                  icon: Icon(
+                                    isFlashOn.value ? Icons.flash_on : Icons.flash_off,
+                                    color: isFlashOn.value
+                                        ? const Color(0xFFFFC107)
+                                        : const Color(0xFFD9D9D9),
                                   ),
                                 ),
                                 IconButton(
-                                  onPressed: _flipCamera,
-                                  icon: const Icon(
+                                  onPressed: flipCamera,
+                                  icon: Icon(
                                     Icons.flip_camera_android,
-                                    color: Color(0xFFD9D9D9),
+                                    color: isFrontCamera.value
+                                        ? const Color(0xFFD9D9D9)
+                                        : const Color(0xFFFFC107),
                                   ),
                                 ),
                               ],
@@ -162,53 +173,52 @@ class _CameraPageState extends ConsumerState<CameraPage>
                           ),
                           const Gap(120),
                           const ScanSpot(),
-                          const Gap(120),
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    onPressed: () => setState(() {
-                                      zoomLevel = (zoomLevel - 0.1).clamp(0.0, 1.0);
-                                      cameraController.setZoomScale(zoomLevel);
-                                    }),
-                                    icon: const Icon(
-                                      Icons.remove,
-                                      color: Colors.white,
-                                    ),
+                          Gap(pageConstraints.maxHeight / 3),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0,
+                            ),
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    zoomLevel.value =
+                                        (zoomLevel.value - 0.1).clamp(0.0, 1.0);
+                                    cameraController.setZoomScale(zoomLevel.value);
+                                  },
+                                  icon: const Icon(
+                                    Icons.remove,
+                                    color: Colors.white,
                                   ),
-                                  Expanded(
-                                    child: Slider(
-                                      value: zoomLevel,
-                                      min: 0.0,
-                                      max: 1.0,
-                                      divisions: 10,
-                                      label: '${(zoomLevel * 100).round()}% zoom',
-                                      thumbColor: const Color(0xFFFDB623),
-                                      activeColor: const Color(0xFFFDB623),
-                                      inactiveColor: Colors.white,
-                                      onChanged: (newZoom) {
-                                        setState(() {
-                                          zoomLevel = newZoom;
-                                          cameraController.setZoomScale(zoomLevel);
-                                        });
-                                      },
-                                    ),
+                                ),
+                                Expanded(
+                                  child: Slider(
+                                    value: zoomLevel.value,
+                                    min: 0.0,
+                                    max: 1.0,
+                                    divisions: 10,
+                                    label: '${(zoomLevel.value * 100).round()}% zoom',
+                                    thumbColor: const Color(0xFFFDB623),
+                                    activeColor: const Color(0xFFFDB623),
+                                    inactiveColor: Colors.white,
+                                    onChanged: (newZoom) {
+                                      zoomLevel.value = newZoom;
+                                      cameraController.setZoomScale(zoomLevel.value);
+                                    },
                                   ),
-                                  IconButton(
-                                    onPressed: () => setState(() {
-                                      zoomLevel = (zoomLevel + 0.1).clamp(0.0, 1.0);
-                                      cameraController.setZoomScale(zoomLevel);
-                                    }),
-                                    icon: const Icon(
-                                      Icons.add,
-                                      color: Colors.white,
-                                    ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    zoomLevel.value =
+                                        (zoomLevel.value + 0.1).clamp(0.0, 1.0);
+                                    cameraController.setZoomScale(zoomLevel.value);
+                                  },
+                                  icon: const Icon(
+                                    Icons.add,
+                                    color: Colors.white,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -218,10 +228,10 @@ class _CameraPageState extends ConsumerState<CameraPage>
               controller: cameraController,
               scanWindow: Rect.fromCircle(
                 center:
-                    Offset(pageConstraints.maxWidth / 2, pageConstraints.maxHeight / 3),
+                    Offset(pageConstraints.maxWidth / 2, pageConstraints.maxHeight / 2.4),
                 radius: 125,
               ),
-              onDetect: captureCode,
+              onDetect: (capture) => captureCode(capture),
             ),
             if (pageIndex != 1)
               Positioned.fill(
@@ -233,9 +243,7 @@ class _CameraPageState extends ConsumerState<CameraPage>
                 ),
               ),
             const GeneratePage(),
-            HistoryPage(
-              tabController: _tabController,
-            ),
+            HistoryPage(),
             const CustomBottomNavigationBar(),
           ],
         );

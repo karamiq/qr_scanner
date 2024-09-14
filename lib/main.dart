@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'data/shared_preference/shared_preferences_lib.dart';
 
-const String appName = 'App';
+const String appName = 'QR Scanner';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +14,7 @@ Future<void> main() async {
 
   timeago.setLocaleMessages('ar', timeago.ArMessages()); // Add french messages
 
-    // HttpOverrides.global = MyHttpOverrides();
+  // HttpOverrides.global = MyHttpOverrides();
 
   runApp(
     ProviderScope(
