@@ -84,14 +84,14 @@ class _SettingsOptionState extends State<SettingsOption> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  fontFamily: GoogleFonts.roboto().fontFamily,
+                  // fontFamily: GoogleFonts.roboto().fontFamily,
                 ),
               ),
               subtitle: Text(
                 widget.subtitle,
                 style: TextStyle(
-                  fontFamily: GoogleFonts.roboto().fontFamily,
-                ),
+                    //   fontFamily: GoogleFonts.roboto().fontFamily,
+                    ),
               ),
               trailing: isLoading
                   ? const CircularProgressIndicator()

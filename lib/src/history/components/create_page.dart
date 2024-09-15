@@ -78,7 +78,7 @@ class CreatePage extends HookConsumerWidget {
                               borderRadius: BorderSize.extraSmallRadius,
                             ),
                             child: const Text(
-                              "The contact has been added to history list successfully",
+                              "The QR data has been added to history list successfully",
                               style: TextStyle(
                                 color: Color(0xFFFDB623),
                               ),

@@ -28,25 +28,7 @@ class QrCodeDetailes extends StatelessWidget {
         children: [
           const CustomAppBar(title: 'Result'),
           const Gap(Insets.extraLarge),
-          Screenshot(
-            controller: screenshotController,
-            child: Container(
-              height: 250,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderSize.extraSmallRadius,
-                  border: Border.all(color: const Color(0xFFFDB623), width: 4)),
-              child: QrImageView(
-                gapless: false,
-                dataModuleStyle:
-                    const QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square),
-                // ignore: deprecated_member_use
-                foregroundColor: Colors.black,
-                data: item.data,
-                version: QrVersions.auto,
-              ),
-            ),
-          ),
+          ScreenshotQRImage(screenshotController: screenshotController, item: item),
           const Gap(Insets.extraLarge),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -59,28 +41,7 @@ class QrCodeDetailes extends StatelessWidget {
               gap: Insets.extraSmall,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ListTile(
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: Insets.small + 2),
-                  leading: Image.asset(
-                    Assets.assetsImagesAppIconDark,
-                  ),
-                  title: Text(
-                    '${item.type[0].toUpperCase()}${item.type.substring(1)}',
-                    maxLines: 1,
-                    style: const TextStyle(
-                      color: Color(0xFFD9D9D9),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  subtitle: Text(
-                    DateFormat('dd MMM yyyy, hh:mm a').format(item.date),
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFFA4A4A4),
-                    ),
-                  ),
-                ),
+                DetailesListTile(item: item),
                 const Divider(
                   color: Color(0xFF858585),
                   thickness: .3,
@@ -91,6 +52,7 @@ class QrCodeDetailes extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Text(
                     item.data,
+                    maxLines: 5,
                     style: const TextStyle(
                       color: Color(0xFFD9D9D9),
                       fontSize: 17,
@@ -127,5 +89,73 @@ class QrCodeDetailes extends StatelessWidget {
         ],
       ),
     ));
+  }
+}
+
+class DetailesListTile extends StatelessWidget {
+  const DetailesListTile({
+    super.key,
+    required this.item,
+  });
+
+  final QrDataModel item;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: Insets.small + 2),
+      leading: Image.asset(
+        Assets.assetsImagesAppIconDark,
+      ),
+      title: Text(
+        '${item.type[0].toUpperCase()}${item.type.substring(1)}',
+        maxLines: 1,
+        style: const TextStyle(
+          color: Color(0xFFD9D9D9),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+      subtitle: Text(
+        DateFormat('dd MMM yyyy, hh:mm a').format(item.date),
+        style: const TextStyle(
+          fontSize: 12,
+          color: Color(0xFFA4A4A4),
+        ),
+      ),
+    );
+  }
+}
+
+class ScreenshotQRImage extends StatelessWidget {
+  const ScreenshotQRImage({
+    super.key,
+    required this.screenshotController,
+    required this.item,
+  });
+
+  final ScreenshotController screenshotController;
+  final QrDataModel item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Screenshot(
+      controller: screenshotController,
+      child: Container(
+        height: 250,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderSize.extraSmallRadius,
+            border: Border.all(color: const Color(0xFFFDB623), width: 4)),
+        child: QrImageView(
+          gapless: false,
+          dataModuleStyle:
+              const QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square),
+          // ignore: deprecated_member_use
+          foregroundColor: Colors.black,
+          data: item.data,
+          version: QrVersions.auto,
+        ),
+      ),
+    );
   }
 }

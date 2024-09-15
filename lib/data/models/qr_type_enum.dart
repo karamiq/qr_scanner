@@ -1,4 +1,8 @@
-import 'package:flutter/services.dart';
+import 'package:app/src/generate_qr_code/generate_form_types/business_qr_code.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:path/path.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../common_lib.dart';
@@ -25,7 +29,7 @@ enum QRType {
 
 Future<void> launchApp(String data) async {
   final type = handleQRCode(data);
-  print('Data: $data\nType: $type');
+  final tt = type == QRType.contact ? 'contact' : 'business';
 
   switch (type) {
     case QRType.website:
@@ -39,22 +43,113 @@ Future<void> launchApp(String data) async {
     case QRType.location:
       try {
         await launchUrl(Uri.parse(data));
-        // ignore: empty_catches
-      } catch (e) {}
+      } catch (e) {
+        // Handle error if needed
+        print('Error launching URL: $e');
+      }
       break;
+
     case QRType.contact:
+      try {
+        final vCardData = extractVCardData(data);
+        final state = await Permission.contacts.request();
+
+        if (state.isGranted) {
+          final contact = Contact(
+            name: Name(
+              first: vCardData['FN']?.split(' ').first ?? '',
+              last: vCardData['FN']?.split(' ').skip(1).join(' ') ?? '',
+            ),
+            organizations: [
+              Organization(
+                  company: vCardData['ORG'] ?? '', title: vCardData['TITLE'] ?? '')
+            ],
+            phones: [
+              Phone(vCardData['TEL'] ?? '', label: PhoneLabel.mobile),
+            ],
+            emails: [
+              Email(vCardData['EMAIL'] ?? ''),
+            ],
+            addresses: [
+              Address(vCardData['ADR'] ?? ''),
+            ],
+            websites: [
+              Website(vCardData['URL'] ?? ''),
+            ],
+          );
+          await FlutterContacts.insertContact(contact);
+          Utils.showSuccessSnackBar('The $tt has been added to contacts');
+        } else {
+          Utils.showErrorSnackBar('Permission to access contacts was denied');
+        }
+      } catch (e) {
+        //
+      }
+      break;
     case QRType.business:
       try {
-        final url = Uri.encodeComponent(data);
+        final vCardData = extractVCardData(data);
+        final state = await Permission.contacts.request();
 
-        launchUrl(Uri.parse('content://contacts/people/'));
-      } on PlatformException catch (e) {
-        print(e.toString());
+        if (state.isGranted) {
+          final contact = Contact(
+            name: Name(
+              first: vCardData['N'] ?? 'null',
+            ),
+            organizations: [
+              Organization(
+                company: vCardData['ORG'] ?? '',
+                title: vCardData['N'] ?? '',
+              )
+            ],
+            phones: [
+              Phone(
+                vCardData['TEL'] ?? '',
+                label: PhoneLabel.work,
+              ),
+            ],
+            emails: [
+              Email(vCardData['EMAIL'] ?? ''),
+            ],
+            addresses: [
+              Address(vCardData['ADR'] ?? '', label: AddressLabel.work),
+            ],
+            websites: [
+              Website(vCardData['URL'] ?? ''),
+            ],
+          );
+          await FlutterContacts.insertContact(contact);
+          Utils.showSuccessSnackBar('The $tt has been added to contacts');
+        } else {
+          Utils.showErrorSnackBar('Permission to access contacts was denied');
+        }
+      } catch (e) {
+        //
       }
+      break;
+
     case QRType.text:
     default:
       return;
   }
+}
+
+Map<String, String> extractVCardData(String vCardString) {
+  final data = <String, String>{};
+
+  final lines = vCardString.split('\n');
+
+  for (var line in lines) {
+    if (line.trim().isEmpty) continue;
+
+    final parts = line.split(':');
+    if (parts.length == 2) {
+      final key = parts[0].trim();
+      final value = parts[1].trim();
+      data[key] = value;
+    }
+  }
+  return data;
 }
 
 extension QRTypeIconExtension on QRType {
@@ -130,7 +225,7 @@ QRType handleQRCode(String qrCode) {
   } else if (qrCode.startsWith('BEGIN:VCARD')) {
     return QRType.contact;
   } else if (qrCode.startsWith('MECARD:')) {
-    return QRType.contact;
+    return QRType.business;
   } else if (qrCode.startsWith('geo:')) {
     return QRType.location;
   }

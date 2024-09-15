@@ -37,9 +37,13 @@ class DeleteQRDataProvider extends _$DeleteQRDataProvider with AsyncXNotifierMix
 
   @useResult
   RunXCallback<void> deleteTable() => handle(() async {
-        final db = await _getDatabase();
-        await db.execute('DELETE FROM scanned_qr_codes');
-        return;
+        try {
+          final db = await _getDatabase();
+          await db.execute('DELETE FROM scanned_qr_codes');
+          return;
+        } catch (e) {
+          //
+        }
       });
 }
 

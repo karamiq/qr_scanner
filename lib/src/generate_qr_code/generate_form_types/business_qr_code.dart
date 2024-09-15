@@ -26,15 +26,15 @@ class GenerateBusinessQRCode extends HookWidget {
     final cityController = useTextEditingController();
     final countryController = useTextEditingController();
     void updateQRData() {
-      String qrData = 'BEGIN:VCARD\n'
-          'VERSION:3.0\n'
-          'FN:${companyNameController.text}\n'
-          'ORG:${industryController.text}\n'
-          'TEL:${phoneController.text}\n'
-          'EMAIL:${emailController.text}\n'
-          'URL:${websiteController.text}\n'
-          'ADR:;;${addressController.text};${cityController.text};${countryController.text}\n'
-          'END:VCARD';
+      String qrData = '''
+MECARD:
+N:${companyNameController.text}
+ORG:${industryController.text}
+TEL:${phoneController.text}
+EMAIL:${emailController.text}
+URL:${websiteController.text}
+ADR:${addressController.text},${cityController.text},${countryController.text}
+''';
 
       onChange(qrData);
     }
