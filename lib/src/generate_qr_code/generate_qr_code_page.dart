@@ -22,7 +22,7 @@ import 'generate_form_types/generate_contact_qr_code.dart';
 import 'generate_form_types/text_and_internet_qr_code.dart';
 
 //This is keept here not inside cuz when it's inside the build it keeps rebuild and thus keeping it empty
-String qrData = '';
+String _qrData = '';
 
 class GenerateQrCodePage extends HookConsumerWidget {
   const GenerateQrCodePage({super.key, required this.type});
@@ -37,60 +37,60 @@ class GenerateQrCodePage extends HookConsumerWidget {
       switch (type) {
         case QRType.text:
           return GenerateTextQRCode(
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
         case QRType.website:
           return GenerateInternetQRCode(
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
         case QRType.network:
           return GenerateWifiQRCode(
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
         case QRType.event:
           return GenerateEventQRCode(
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
         case QRType.contact:
           return GenerateContactQRCode(
             type: type,
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
         case QRType.business:
           return GenerateBusinessQRCode(
             type: type,
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
         case QRType.whatsApp:
           return GenerateWhatsAppQRCode(
             type: type,
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
         case QRType.twitter:
           return GenerateTwitterORXQRCode(
             type: type,
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
         case QRType.email:
           return GenerateEmailORXQRCode(
             type: type,
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
         case QRType.instagram:
           return GenerateInstagramQRCode(
             type: type,
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
         case QRType.phoneNumber:
           return GeneratePhoneNumberQRCode(
             type: type,
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
 
         case QRType.location:
           return GenerateLocationQRCode(
             type: type,
-            onChange: (value) => qrData = value,
+            onChange: (value) => _qrData = value,
           );
         default:
           return Container();
@@ -138,7 +138,7 @@ class GenerateQrCodePage extends HookConsumerWidget {
                         if (formKey.currentState?.validate() ?? false) {
                           final item = QrDataModel(
                               id: const Uuid().v4(),
-                              data: qrData,
+                              data: _qrData,
                               date: DateTime.now(),
                               type: type.name);
                           showQrdataDialog(context, screenshotController, item);

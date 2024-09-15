@@ -37,7 +37,10 @@ class CameraPage extends HookConsumerWidget {
     }, [cameraController]);
 
     void captureCode(BarcodeCapture? capture) async {
-      if (capture == null) return;
+      if (capture == null) {
+        Utils.showErrorSnackBar('Faild to detect QR Code in the image');
+        return;
+      }
       final List<Barcode> barcodes = capture.barcodes;
       url = barcodes.first.rawValue;
       if (barcodes.isNotEmpty && pageIndex == 1 && showResult.value == true) {

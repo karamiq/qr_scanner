@@ -1,5 +1,4 @@
 import 'package:app/common_lib.dart';
-import 'package:app/theme/app_theme.dart';
 import 'package:app/utils/extensions.dart';
 import 'package:flutter/material.dart';
 
@@ -8,9 +7,12 @@ class Utils {
   static showErrorSnackBar(String? text) {
     if (text == null) return;
     SnackBar snackBar = SnackBar(
-      content: Text(text),
+      content: Text(
+        text,
+        style: const TextStyle(color: Colors.white),
+      ),
       behavior: SnackBarBehavior.floating,
-      backgroundColor: colorSchemeNotifier.value.error,
+      backgroundColor: const Color(0xFFFF6347).withAlpha(200),
     );
     messengerKey.currentState!
       ..removeCurrentSnackBar()

@@ -3,13 +3,13 @@ import 'package:app/data/models/qr_type_enum.dart';
 import 'package:app/utils/components/custom_app_bar.dart';
 import 'package:app/utils/components/custom_scaffold.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import '../../common_lib.dart';
 import '../components/options_row.dart';
+import 'components/detailse_list-tile.dart';
+import 'components/qr-code-image.dart';
 
-class QrCodeDetailes extends StatelessWidget {
+class QrCodeDetailes extends HookWidget {
   const QrCodeDetailes({
     super.key,
     required this.item,
@@ -19,7 +19,8 @@ class QrCodeDetailes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ScreenshotController screenshotController = ScreenshotController();
-    bool isLoading = false;
+    ValueNotifier<bool> isLoading = useState<bool>(false);
+    ValueNotifier<bool> _isExpanded = useState<bool>(false);
 
     return CustomScaffold(
         body: SingleChildScrollView(
@@ -27,9 +28,10 @@ class QrCodeDetailes extends StatelessWidget {
         gap: Insets.medium,
         children: [
           const CustomAppBar(title: 'Result'),
-          const Gap(Insets.extraLarge),
           ScreenshotQRImage(screenshotController: screenshotController, item: item),
-          const Gap(Insets.extraLarge),
+          const Gap(
+            Insets.medium,
+          ),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 40),
             padding: Insets.smallAll,
@@ -48,35 +50,55 @@ class QrCodeDetailes extends StatelessWidget {
                   endIndent: 10,
                   indent: 10,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Text(
-                    item.data,
-                    maxLines: 5,
-                    style: const TextStyle(
-                      color: Color(0xFFD9D9D9),
-                      fontSize: 17,
-                      overflow: TextOverflow.ellipsis,
+                ExpansionPanelList(
+                  elevation: 0,
+                  dividerColor: Colors.yellow,
+                  expansionCallback: (panelIndex, isExpanded) =>
+                      _isExpanded.value = !_isExpanded.value,
+                  children: [
+                    ExpansionPanel(
+                      backgroundColor: const Color(0xFF3C3C3C),
+                      isExpanded: _isExpanded.value,
+                      headerBuilder: (context, isExpanded) => AnimatedContainer(
+                        duration: const Duration(
+                          milliseconds: 300,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            !_isExpanded.value
+                                ? '${item.data.split('\n').first}...'
+                                : 'Hide',
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                      body: Text(
+                        item.data,
+                        style: const TextStyle(
+                          color: Color(0xFFD9D9D9),
+                          fontSize: 17,
+                          overflow: TextOverflow.fade,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                StatefulBuilder(builder: (context, setState) {
-                  return Align(
-                    alignment: Alignment.center,
-                    child: TextButton(
-                      onPressed: isLoading
-                          ? null
-                          : () async {
-                              setState(() => isLoading = true);
-                              await launchApp(item.data);
-                              setState(() => isLoading = false);
-                            },
-                      child: isLoading
-                          ? const CircularProgressIndicator.adaptive()
-                          : const Text('Open'),
-                    ),
-                  );
-                })
+                Align(
+                  alignment: Alignment.center,
+                  child: TextButton(
+                    onPressed: isLoading.value
+                        ? null
+                        : () async {
+                            isLoading.value = true;
+                            await launchApp(item.data);
+                            isLoading.value = false;
+                          },
+                    child: isLoading.value
+                        ? const CircularProgressIndicator.adaptive()
+                        : const Text('Open'),
+                  ),
+                )
               ],
             ),
           ),
@@ -85,77 +107,8 @@ class QrCodeDetailes extends StatelessWidget {
             item: item,
             screenshotController: screenshotController,
           ),
-          const Gap(120),
         ],
       ),
     ));
-  }
-}
-
-class DetailesListTile extends StatelessWidget {
-  const DetailesListTile({
-    super.key,
-    required this.item,
-  });
-
-  final QrDataModel item;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: Insets.small + 2),
-      leading: Image.asset(
-        Assets.assetsImagesAppIconDark,
-      ),
-      title: Text(
-        '${item.type[0].toUpperCase()}${item.type.substring(1)}',
-        maxLines: 1,
-        style: const TextStyle(
-          color: Color(0xFFD9D9D9),
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
-      subtitle: Text(
-        DateFormat('dd MMM yyyy, hh:mm a').format(item.date),
-        style: const TextStyle(
-          fontSize: 12,
-          color: Color(0xFFA4A4A4),
-        ),
-      ),
-    );
-  }
-}
-
-class ScreenshotQRImage extends StatelessWidget {
-  const ScreenshotQRImage({
-    super.key,
-    required this.screenshotController,
-    required this.item,
-  });
-
-  final ScreenshotController screenshotController;
-  final QrDataModel item;
-
-  @override
-  Widget build(BuildContext context) {
-    return Screenshot(
-      controller: screenshotController,
-      child: Container(
-        height: 250,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderSize.extraSmallRadius,
-            border: Border.all(color: const Color(0xFFFDB623), width: 4)),
-        child: QrImageView(
-          gapless: false,
-          dataModuleStyle:
-              const QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square),
-          // ignore: deprecated_member_use
-          foregroundColor: Colors.black,
-          data: item.data,
-          version: QrVersions.auto,
-        ),
-      ),
-    );
   }
 }

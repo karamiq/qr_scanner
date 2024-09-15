@@ -12,25 +12,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      forceMaterialTransparency: true,
-      title: Text(
-        title,
-        style: const TextStyle(color: Color(0xFFD9D9D9)),
-      ),
-      backgroundColor: Colors.transparent,
-      leading: IconButton.filled(
-        style: IconButton.styleFrom(
-          backgroundColor: const Color(0xFF333333),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: AppBar(
+        forceMaterialTransparency: true,
+        title: Text(
+          title,
+          style: const TextStyle(color: Color(0xFFD9D9D9)),
         ),
-        onPressed: () {
-          print('Go back go back');
-          Navigator.pop(context);
-        },
-        icon: SvgPicture.asset(Assets.assetsSvgArrowBack),
+        backgroundColor: Colors.transparent,
+        leading: IconButton.filled(
+          style: IconButton.styleFrom(
+            backgroundColor: const Color(0xFF333333),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onPressed: () {
+            print('Go back go back');
+            Navigator.pop(context);
+          },
+          icon: SvgPicture.asset(Assets.assetsSvgArrowBack),
+        ),
       ),
     );
   }
