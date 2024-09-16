@@ -68,7 +68,7 @@ class QrCodeDetailes extends HookWidget {
                           child: Text(
                             !isExpanded.value
                                 ? '${item.data.split('\n').first}...'
-                                : 'Hide',
+                                : '',
                             style: const TextStyle(fontSize: 18),
                           ),
                         ),

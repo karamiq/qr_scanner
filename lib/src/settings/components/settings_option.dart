@@ -1,6 +1,6 @@
 import 'package:app/common_lib.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 
 class SettingsOption extends StatefulWidget {
   final String title;

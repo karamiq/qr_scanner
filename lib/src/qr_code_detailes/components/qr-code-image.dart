@@ -38,3 +38,7 @@ class ScreenshotQRImage extends StatelessWidget {
     );
   }
 }
+
+class LegoQRPainter extends QrPainter {
+  LegoQRPainter.withQr({required super.qr}) : super.withQr();
+}

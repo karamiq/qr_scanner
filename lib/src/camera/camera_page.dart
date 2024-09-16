@@ -5,10 +5,13 @@ import 'package:app/data/models/qr_type_enum.dart';
 import 'package:app/data/providers/qr_data_provider.dart';
 import 'package:app/src/components/scan_button.dart';
 import 'package:app/src/settings/settings_page.dart';
+import 'package:app/utils/components/custom_scaffold.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vibration/vibration.dart';
 import '../components/custom_bottom_navigation_bar.dart';
@@ -56,7 +59,8 @@ class _CameraPageState extends ConsumerState<CameraPage> {
             data: url!,
             date: DateTime.now(),
             type: handleQRCode(url!).toString());
-        final state = await ref.read(addQRDataProvider.notifier).addQRdata(item);
+        final state =
+            await ref.read(addQRDataProvider.notifier).addQRdata(item);
 
         state.isLoading;
 
@@ -80,7 +84,8 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     void selectImageFromGallery() async {
       try {
         final ImagePicker picker = ImagePicker();
-        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+        final XFile? image =
+            await picker.pickImage(source: ImageSource.gallery);
         if (image != null) {
           final capture = await cameraController.analyzeImage(image.path);
           captureCode(capture);
@@ -114,25 +119,48 @@ class _CameraPageState extends ConsumerState<CameraPage> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: const Color(0xFF333333),
       body: LayoutBuilder(builder: (context, pageConstraints) {
         return Stack(
           alignment: Alignment.topCenter,
           children: [
             MobileScanner(
               errorBuilder: (context, error, child) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(error.toString()),
-                    ElevatedButton(
-                        onPressed: () async {}, child: const Text('Try again')),
-                    Container(
-                      color: Colors.red,
-                      height: 250,
-                      width: 250,
-                      child: child,
-                    )
-                  ],
+                child: CustomScaffold(
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Error while initializing the camera \nplease restart the application',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        const Gap(20),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: const RoundedRectangleBorder(borderRadius: BorderSize.extraSmallRadius,),
+                            backgroundColor: const Color(0xFF333333),
+                          ),
+                            onPressed: () async {
+                              await Permission.notification.request();
+                            await  Restart.restartApp(
+                                notificationTitle: 'Restarting App',
+                                notificationBody:
+                                    'Please tap here to open the app again.',
+                              );
+                            },
+                            child:const  Padding(
+                              padding: Insets.smallAll,
+                              child:  Text(
+                                'Restart',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
                 ),
               ),
               overlayBuilder: (context, constraints) => pageIndex == 1
@@ -142,7 +170,8 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                           Container(
                             margin: const EdgeInsets.all(20),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: Insets.medium, vertical: Insets.small),
+                                horizontal: Insets.medium,
+                                vertical: Insets.small),
                             decoration: const BoxDecoration(
                                 color: Color(0xFF333333),
                                 borderRadius: BorderSize.extraSmallRadius),
@@ -159,7 +188,9 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                                 IconButton(
                                   onPressed: toggleFlash,
                                   icon: Icon(
-                                    isFlashOn.value ? Icons.flash_on : Icons.flash_off,
+                                    isFlashOn.value
+                                        ? Icons.flash_on
+                                        : Icons.flash_off,
                                     color: isFlashOn.value
                                         ? const Color(0xFFFFC107)
                                         : const Color(0xFFD9D9D9),
@@ -190,7 +221,8 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                                   onPressed: () {
                                     zoomLevel.value =
                                         (zoomLevel.value - 0.1).clamp(0.0, 1.0);
-                                    cameraController.setZoomScale(zoomLevel.value);
+                                    cameraController
+                                        .setZoomScale(zoomLevel.value);
                                   },
                                   icon: const Icon(
                                     Icons.remove,
@@ -203,13 +235,15 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                                     min: 0.0,
                                     max: 1.0,
                                     divisions: 10,
-                                    label: '${(zoomLevel.value * 100).round()}% zoom',
+                                    label:
+                                        '${(zoomLevel.value * 100).round()}% zoom',
                                     thumbColor: const Color(0xFFFDB623),
                                     activeColor: const Color(0xFFFDB623),
                                     inactiveColor: Colors.white,
                                     onChanged: (newZoom) {
                                       zoomLevel.value = newZoom;
-                                      cameraController.setZoomScale(zoomLevel.value);
+                                      cameraController
+                                          .setZoomScale(zoomLevel.value);
                                     },
                                   ),
                                 ),
@@ -217,7 +251,8 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                                   onPressed: () {
                                     zoomLevel.value =
                                         (zoomLevel.value + 0.1).clamp(0.0, 1.0);
-                                    cameraController.setZoomScale(zoomLevel.value);
+                                    cameraController
+                                        .setZoomScale(zoomLevel.value);
                                   },
                                   icon: const Icon(
                                     Icons.add,
@@ -233,8 +268,8 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                   : const SizedBox.shrink(),
               controller: cameraController,
               scanWindow: Rect.fromCircle(
-                center:
-                    Offset(pageConstraints.maxWidth / 2, pageConstraints.maxHeight / 2.4),
+                center: Offset(pageConstraints.maxWidth / 2,
+                    pageConstraints.maxHeight / 2.4),
                 radius: 125,
               ),
               onDetect: (capture) => captureCode(capture),

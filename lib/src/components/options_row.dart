@@ -25,7 +25,7 @@ class OptionsRow extends StatelessWidget {
       final status = await Permission.storage.request();
       if (status.isGranted) {
         final result =
-            await ImageGallerySaver.saveImage(uint8list, name: '${item.type}-qr-code');
+            await ImageGallerySaver.saveImage(uint8list, name: '${item.id}-qr-code');
         if (result != null && result["isSuccess"]) {
           Utils.showSuccessSnackBar('Image saved successfully');
         } else {
@@ -57,7 +57,6 @@ class OptionsRow extends StatelessWidget {
           onPressed: () {
             //copy the url
             Clipboard.setData(ClipboardData(text: item.data));
-            Utils.showSuccessSnackBar('Copied');
           },
         ),
         QRIconOption(

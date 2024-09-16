@@ -9,9 +9,7 @@ const String appName = 'QR Scanner';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   final sharedPreferences = await SharedPreferences.getInstance();
-
   timeago.setLocaleMessages('ar', timeago.ArMessages()); // Add french messages
 
   // HttpOverrides.global = MyHttpOverrides();
