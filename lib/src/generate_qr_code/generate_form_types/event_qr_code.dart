@@ -88,6 +88,7 @@ class GenerateEventQRCode extends HookWidget {
           const Text('Location'),
           const Gap(Insets.small),
           CustomTextFormField(
+            keyboardType: TextInputType.streetAddress,
             onChanged: (value) => updateQRCode(),
             controller: locationController,
             hintText: 'Enter event location',
@@ -116,6 +117,7 @@ class GenerateEventQRCode extends HookWidget {
           const Text('Description'),
           const Gap(Insets.small),
           CustomTextFormField(
+            keyboardType: TextInputType.text,
             onChanged: (value) => updateQRCode(),
             controller: descriptionController,
             maxLines: 5,

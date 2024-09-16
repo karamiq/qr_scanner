@@ -32,9 +32,10 @@ class GeneratePhoneNumberQRCode extends HookWidget {
         children: [
           const Text('Phone Number'),
           CustomTextFormField(
+            keyboardType: TextInputType.phone,
             controller: numberController,
             hintText: '+964xxxxxxxxxx',
-            validator: context.validator.required().build(),
+            validator: context.validator.phone().build(),
             onChanged: (value) => updateQRData(),
           ),
         ],

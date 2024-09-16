@@ -81,7 +81,7 @@ class _SettingsOptionState extends State<SettingsOption> {
               ),
               title: Text(
                 widget.title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   // fontFamily: GoogleFonts.roboto().fontFamily,
@@ -89,7 +89,7 @@ class _SettingsOptionState extends State<SettingsOption> {
               ),
               subtitle: Text(
                 widget.subtitle,
-                style: TextStyle(
+                style: const TextStyle(
                     //   fontFamily: GoogleFonts.roboto().fontFamily,
                     ),
               ),

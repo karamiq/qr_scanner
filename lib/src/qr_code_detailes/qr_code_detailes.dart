@@ -20,7 +20,7 @@ class QrCodeDetailes extends HookWidget {
   Widget build(BuildContext context) {
     final ScreenshotController screenshotController = ScreenshotController();
     ValueNotifier<bool> isLoading = useState<bool>(false);
-    ValueNotifier<bool> _isExpanded = useState<bool>(false);
+    ValueNotifier<bool> isExpanded = useState<bool>(false);
 
     return CustomScaffold(
         body: SingleChildScrollView(
@@ -53,20 +53,20 @@ class QrCodeDetailes extends HookWidget {
                 ExpansionPanelList(
                   elevation: 0,
                   dividerColor: Colors.yellow,
-                  expansionCallback: (panelIndex, isExpanded) =>
-                      _isExpanded.value = !_isExpanded.value,
+                  expansionCallback: (panelIndex, isExpandedd) =>
+                      isExpanded.value = !isExpanded.value,
                   children: [
                     ExpansionPanel(
                       backgroundColor: const Color(0xFF3C3C3C),
-                      isExpanded: _isExpanded.value,
-                      headerBuilder: (context, isExpanded) => AnimatedContainer(
+                      isExpanded: isExpanded.value,
+                      headerBuilder: (context, isExpandedd) => AnimatedContainer(
                         duration: const Duration(
                           milliseconds: 300,
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            !_isExpanded.value
+                            !isExpanded.value
                                 ? '${item.data.split('\n').first}...'
                                 : 'Hide',
                             style: const TextStyle(fontSize: 18),

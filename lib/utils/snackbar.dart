@@ -43,6 +43,7 @@ class Utils {
   static showNotificatonSnackBar(String? title) {
     if (title == null) return;
     SnackBar snackBar = SnackBar(
+      duration: const Duration(milliseconds: 1000),
       content: Text(title),
       behavior: SnackBarBehavior.floating,
     );

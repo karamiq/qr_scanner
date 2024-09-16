@@ -70,6 +70,7 @@ END:VCARD
                     const Text('First name'),
                     const SizedBox(height: Insets.small),
                     CustomTextFormField(
+                      keyboardType: TextInputType.text,
                       controller: firstController,
                       hintText: 'Enter name',
                       validator: context.validator.required().build(),
@@ -87,8 +88,8 @@ END:VCARD
                     const SizedBox(height: Insets.small),
                     CustomTextFormField(
                       controller: lastController,
+                      keyboardType: TextInputType.text,
                       hintText: 'Enter name',
-                      validator: context.validator.required().build(),
                       onChanged: (value) => updateQRData(),
                     ),
                   ],
@@ -105,9 +106,9 @@ END:VCARD
                     const Text('Company'),
                     const SizedBox(height: Insets.small),
                     CustomTextFormField(
+                      keyboardType: TextInputType.text,
                       controller: companyController,
                       hintText: 'Enter company',
-                      validator: context.validator.required().build(),
                       onChanged: (value) => updateQRData(),
                     ),
                   ],
@@ -121,9 +122,9 @@ END:VCARD
                     const Text('Job'),
                     const SizedBox(height: Insets.small),
                     CustomTextFormField(
+                      keyboardType: TextInputType.text,
                       controller: jobController,
                       hintText: 'Enter job',
-                      validator: context.validator.required().build(),
                       onChanged: (value) => updateQRData(),
                     ),
                   ],
@@ -131,53 +132,31 @@ END:VCARD
               ),
             ],
           ),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Phone'),
-                    const SizedBox(height: Insets.small),
-                    CustomTextFormField(
-                      controller: phoneController,
-                      hintText: 'Enter phone',
-                      validator: context.validator.required().build(),
-                      onChanged: (value) => updateQRData(),
-                    ),
-                  ],
-                ),
-              ),
-              const Gap(Insets.large),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Email'),
-                    const SizedBox(height: Insets.small),
-                    CustomTextFormField(
-                      controller: emailController,
-                      hintText: 'Enter email',
-                      validator: context.validator.required().build(),
-                      onChanged: (value) => updateQRData(),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          const Text('Email'),
+          CustomTextFormField(
+            controller: emailController,
+            hintText: 'Enter email',
+            onChanged: (value) => updateQRData(),
+          ),
+          const Text('Phone'),
+          CustomTextFormField(
+            keyboardType: TextInputType.phone,
+            controller: phoneController,
+            hintText: 'Enter phone',
+            validator: context.validator.phone().build(),
+            onChanged: (value) => updateQRData(),
           ),
           const Text('Website'),
           CustomTextFormField(
+            keyboardType: TextInputType.url,
             controller: websiteController,
             hintText: 'Enter website',
-            validator: context.validator.required().build(),
             onChanged: (value) => updateQRData(),
           ),
           const Text('Street'),
           CustomTextFormField(
             controller: streetController,
             hintText: 'Enter street',
-            validator: context.validator.required().build(),
             onChanged: (value) => updateQRData(),
           ),
           Row(
@@ -191,7 +170,6 @@ END:VCARD
                     CustomTextFormField(
                       controller: cityController,
                       hintText: 'Enter city',
-                      validator: context.validator.required().build(),
                       onChanged: (value) => updateQRData(),
                     ),
                   ],
@@ -207,7 +185,6 @@ END:VCARD
                     CustomTextFormField(
                       controller: governorateController,
                       hintText: 'Enter governorate',
-                      validator: context.validator.required().build(),
                       onChanged: (value) => updateQRData(),
                     ),
                   ],

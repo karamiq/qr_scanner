@@ -68,9 +68,9 @@ ADR:${addressController.text},${cityController.text},${countryController.text}
                     const Text('Phone'),
                     const SizedBox(height: Insets.small),
                     CustomTextFormField(
+                      keyboardType: TextInputType.phone,
                       controller: phoneController,
                       hintText: 'Enter phone',
-                      validator: context.validator.required().build(),
                       onChanged: (value) => updateQRData(),
                     ),
                   ],
@@ -84,9 +84,9 @@ ADR:${addressController.text},${cityController.text},${countryController.text}
                     const Text('Email'),
                     const SizedBox(height: Insets.small),
                     CustomTextFormField(
+                      keyboardType: TextInputType.emailAddress,
                       controller: emailController,
                       hintText: 'Enter email',
-                      validator: context.validator.required().build(),
                       onChanged: (value) => updateQRData(),
                     ),
                   ],
@@ -96,16 +96,15 @@ ADR:${addressController.text},${cityController.text},${countryController.text}
           ),
           const Text('Website'),
           CustomTextFormField(
+            keyboardType: TextInputType.url,
             controller: websiteController,
             hintText: 'Enter website',
-            validator: context.validator.required().build(),
             onChanged: (value) => updateQRData(),
           ),
           const Text('Adress'),
           CustomTextFormField(
             controller: addressController,
             hintText: 'Enter street',
-            validator: context.validator.required().build(),
             onChanged: (value) => updateQRData(),
           ),
           Row(
@@ -119,7 +118,6 @@ ADR:${addressController.text},${cityController.text},${countryController.text}
                     CustomTextFormField(
                       controller: cityController,
                       hintText: 'Enter city',
-                      validator: context.validator.required().build(),
                       onChanged: (value) => updateQRData(),
                     ),
                   ],
@@ -135,7 +133,6 @@ ADR:${addressController.text},${cityController.text},${countryController.text}
                     CustomTextFormField(
                       controller: countryController,
                       hintText: 'Enter governorate',
-                      validator: context.validator.required().build(),
                       onChanged: (value) => updateQRData(),
                     ),
                   ],

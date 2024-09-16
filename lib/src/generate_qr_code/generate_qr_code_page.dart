@@ -162,7 +162,6 @@ class GenerateQrCodePage extends HookConsumerWidget {
             ),
           ),
         ),
-        const Gap(Insets.extraLarge * 4),
       ]),
     );
   }

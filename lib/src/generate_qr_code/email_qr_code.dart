@@ -31,9 +31,10 @@ class GenerateEmailORXQRCode extends HookWidget {
         children: [
           const Text('Email'),
           CustomTextFormField(
+            keyboardType: TextInputType.emailAddress,
             controller: numberController,
             hintText: 'Enter email',
-            validator: context.validator.required().build(),
+            validator: context.validator.email().build(),
             onChanged: (value) => updateQRData(),
           ),
         ],

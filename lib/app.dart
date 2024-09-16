@@ -1,6 +1,5 @@
 import 'package:app/main.dart';
 import 'package:app/router/app_router.dart';
-import 'package:app/data/providers/settings_provider.dart';
 import 'package:app/theme/app_theme.dart';
 import 'package:app/utils/extensions.dart';
 import 'package:app/utils/snackbar.dart';
@@ -47,7 +46,7 @@ class _AppState extends ConsumerState<App> {
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme();
-    final settings = ref.watch(settingsProvider);
+    //final settings = ref.watch(settingsProvider);
 
     return MaterialApp.router(
       title: appName,

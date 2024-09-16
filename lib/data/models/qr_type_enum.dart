@@ -1,7 +1,4 @@
-import 'package:app/src/generate_qr_code/generate_form_types/business_qr_code.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 

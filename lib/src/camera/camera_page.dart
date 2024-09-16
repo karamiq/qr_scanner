@@ -16,25 +16,31 @@ import '../generate/generate_page.dart';
 import '../history/history_page.dart';
 import 'components/scan_spot.dart';
 
-class CameraPage extends HookConsumerWidget {
+class CameraPage extends StatefulHookConsumerWidget {
   const CameraPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CameraPage> createState() => _CameraPageState();
+}
+
+class _CameraPageState extends ConsumerState<CameraPage> {
+  late MobileScannerController cameraController;
+  @override
+  void initState() {
+    super.initState();
+    cameraController = MobileScannerController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     AudioPlayer audioPlayer = AudioPlayer();
     final isFlashOn = useState<bool>(false);
     final zoomLevel = useState<double>(0.0);
     final showResult = useState<bool>(true);
     final isFrontCamera = useState<bool>(false);
     final pageIndex = ref.watch(currentPageIndexProvider);
-    final cameraController = MobileScannerController();
-    String? url;
 
-    useEffect(() {
-      return () {
-        cameraController.dispose();
-      };
-    }, [cameraController]);
+    String? url;
 
     void captureCode(BarcodeCapture? capture) async {
       if (capture == null) {
@@ -87,7 +93,8 @@ class CameraPage extends HookConsumerWidget {
 
     void toggleFlash() async {
       if (isFrontCamera.value) {
-        // Prevent flash toggle if camera is flipped
+        Utils.showNotificatonSnackBar(
+            'Flash cannot be turned on while the front camera is active.');
         return;
       }
       if (isFlashOn.value) {
@@ -102,10 +109,10 @@ class CameraPage extends HookConsumerWidget {
     void flipCamera() async {
       await cameraController.switchCamera();
       isFrontCamera.value = !isFrontCamera.value;
+      isFlashOn.value = false;
     }
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: false,
       body: LayoutBuilder(builder: (context, pageConstraints) {
         return Stack(
@@ -118,11 +125,7 @@ class CameraPage extends HookConsumerWidget {
                   children: [
                     Text(error.toString()),
                     ElevatedButton(
-                        onPressed: () async {
-                          await cameraController.stop();
-                          await cameraController.start();
-                        },
-                        child: const Text('Try again')),
+                        onPressed: () async {}, child: const Text('Try again')),
                     Container(
                       color: Colors.red,
                       height: 250,
@@ -166,7 +169,7 @@ class CameraPage extends HookConsumerWidget {
                                   onPressed: flipCamera,
                                   icon: Icon(
                                     Icons.flip_camera_android,
-                                    color: isFrontCamera.value
+                                    color: !isFrontCamera.value
                                         ? const Color(0xFFD9D9D9)
                                         : const Color(0xFFFFC107),
                                   ),
@@ -246,7 +249,7 @@ class CameraPage extends HookConsumerWidget {
                 ),
               ),
             const GeneratePage(),
-            HistoryPage(),
+            const HistoryPage(),
             const CustomBottomNavigationBar(),
           ],
         );
