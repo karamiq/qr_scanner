@@ -1,10 +1,8 @@
+import 'package:app/common_lib.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-import '../common_lib.dart';
-
-PagedChildBuilderDelegate<ItemType>
-    defaultListPagedChildBuilderDelegate<ItemType>({
+PagedChildBuilderDelegate<ItemType> defaultListPagedChildBuilderDelegate<ItemType>({
   required BuildContext context,
   required PagingController<int, ItemType> controller,
   required ItemWidgetBuilder<ItemType> itemBuilder,

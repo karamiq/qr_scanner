@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 // For date formatting
-
 import '../../../common_lib.dart';
 import '../../../data/models/qr_type_enum.dart';
 

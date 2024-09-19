@@ -14,6 +14,14 @@ packages:
     description: dart
     source: sdk
     version: "0.3.2"
+  add_2_calendar:
+    dependency: "direct main"
+    description:
+      name: add_2_calendar
+      sha256: "8d7a82aba607d35f2a5bc913419e12f865a96a350a8ad2509a59322bc161f200"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
   analyzer:
     dependency: transitive
     description:
@@ -310,14 +318,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
-  contacts_service:
-    dependency: "direct main"
-    description:
-      name: contacts_service
-      sha256: f6d5ea33b31dfcdcd2e65d8abdc836502e04ddb0f66a96aa726fa9891ea9671e
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.6.3"
   convert:
     dependency: transitive
     description:
@@ -842,14 +842,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
-  image_gallery_saver:
-    dependency: "direct main"
-    description:
-      name: image_gallery_saver
-      sha256: "0aba74216a4d9b0561510cb968015d56b701ba1bd94aace26aacdd8ae5761816"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.3"
   image_picker:
     dependency: "direct main"
     description:
@@ -1282,14 +1274,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
-  quiver:
-    dependency: transitive
-    description:
-      name: quiver
-      sha256: ea0b925899e64ecdfbf9c7becb60d5b50e706ade44a85b2363be2a22d88117d2
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.2.2"
   responsive_framework:
     dependency: "direct main"
     description:
@@ -1378,6 +1362,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.28.0"
+  saver_gallery:
+    dependency: "direct main"
+    description:
+      name: saver_gallery
+      sha256: "5f4123ec1cd5ed9fcd93198ab30ffe0c7746afcbf6846445432de93240fa7b4e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.6"
   screenshot:
     dependency: "direct main"
     description:
@@ -1879,6 +1871,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  wifi_iot:
+    dependency: "direct main"
+    description:
+      name: wifi_iot
+      sha256: "4a3301f71663a908bb50ffe6d9dc9e8b8383fab48368accf978409bde96e9aca"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.19+1"
   win32:
     dependency: transitive
     description:

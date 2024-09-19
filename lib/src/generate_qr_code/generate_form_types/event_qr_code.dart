@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // For date formatting
-
+import 'package:intl/intl.dart';
 import '../../../common_lib.dart';
+// For date formatting
 
 class GenerateEventQRCode extends HookWidget {
   const GenerateEventQRCode({super.key, required this.onChange});

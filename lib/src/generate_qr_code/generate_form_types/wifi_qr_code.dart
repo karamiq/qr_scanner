@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../common_lib.dart';
 
 class GenerateWifiQRCode extends HookWidget {
@@ -12,7 +11,7 @@ class GenerateWifiQRCode extends HookWidget {
     final passwordController = useTextEditingController();
 
     void updateQRCode() {
-      final s = 'WIFI:T:WPA;S:${nameController.text};P:${passwordController.text};;';
+      final s = '''WIFI:T:WPA;S:${nameController.text};P:${passwordController.text};;''';
       onChange(s);
     }
 

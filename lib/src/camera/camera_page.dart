@@ -59,10 +59,8 @@ class _CameraPageState extends ConsumerState<CameraPage> {
             data: url!,
             date: DateTime.now(),
             type: handleQRCode(url!).toString());
-        final state =
-            await ref.read(addQRDataProvider.notifier).addQRdata(item);
-
-        state.isLoading;
+        // ignore: unused_result
+        await ref.read(addQRDataProvider.notifier).addQRdata(item);
 
         context
             .push(
@@ -84,8 +82,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     void selectImageFromGallery() async {
       try {
         final ImagePicker picker = ImagePicker();
-        final XFile? image =
-            await picker.pickImage(source: ImageSource.gallery);
+        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
         if (image != null) {
           final capture = await cameraController.analyzeImage(image.path);
           captureCode(capture);
@@ -139,21 +136,23 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                         ),
                         const Gap(20),
                         ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: const RoundedRectangleBorder(borderRadius: BorderSize.extraSmallRadius,),
-                            backgroundColor: const Color(0xFF333333),
-                          ),
+                            style: ElevatedButton.styleFrom(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderSize.extraSmallRadius,
+                              ),
+                              backgroundColor: const Color(0xFF333333),
+                            ),
                             onPressed: () async {
                               await Permission.notification.request();
-                            await  Restart.restartApp(
+                              await Restart.restartApp(
                                 notificationTitle: 'Restarting App',
                                 notificationBody:
                                     'Please tap here to open the app again.',
                               );
                             },
-                            child:const  Padding(
+                            child: const Padding(
                               padding: Insets.smallAll,
-                              child:  Text(
+                              child: Text(
                                 'Restart',
                                 style: TextStyle(fontSize: 18),
                               ),
@@ -170,8 +169,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                           Container(
                             margin: const EdgeInsets.all(20),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: Insets.medium,
-                                vertical: Insets.small),
+                                horizontal: Insets.medium, vertical: Insets.small),
                             decoration: const BoxDecoration(
                                 color: Color(0xFF333333),
                                 borderRadius: BorderSize.extraSmallRadius),
@@ -188,9 +186,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                                 IconButton(
                                   onPressed: toggleFlash,
                                   icon: Icon(
-                                    isFlashOn.value
-                                        ? Icons.flash_on
-                                        : Icons.flash_off,
+                                    isFlashOn.value ? Icons.flash_on : Icons.flash_off,
                                     color: isFlashOn.value
                                         ? const Color(0xFFFFC107)
                                         : const Color(0xFFD9D9D9),
@@ -221,8 +217,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                                   onPressed: () {
                                     zoomLevel.value =
                                         (zoomLevel.value - 0.1).clamp(0.0, 1.0);
-                                    cameraController
-                                        .setZoomScale(zoomLevel.value);
+                                    cameraController.setZoomScale(zoomLevel.value);
                                   },
                                   icon: const Icon(
                                     Icons.remove,
@@ -235,15 +230,13 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                                     min: 0.0,
                                     max: 1.0,
                                     divisions: 10,
-                                    label:
-                                        '${(zoomLevel.value * 100).round()}% zoom',
+                                    label: '${(zoomLevel.value * 100).round()}% zoom',
                                     thumbColor: const Color(0xFFFDB623),
                                     activeColor: const Color(0xFFFDB623),
                                     inactiveColor: Colors.white,
                                     onChanged: (newZoom) {
                                       zoomLevel.value = newZoom;
-                                      cameraController
-                                          .setZoomScale(zoomLevel.value);
+                                      cameraController.setZoomScale(zoomLevel.value);
                                     },
                                   ),
                                 ),
@@ -251,8 +244,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                                   onPressed: () {
                                     zoomLevel.value =
                                         (zoomLevel.value + 0.1).clamp(0.0, 1.0);
-                                    cameraController
-                                        .setZoomScale(zoomLevel.value);
+                                    cameraController.setZoomScale(zoomLevel.value);
                                   },
                                   icon: const Icon(
                                     Icons.add,
@@ -268,8 +260,8 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                   : const SizedBox.shrink(),
               controller: cameraController,
               scanWindow: Rect.fromCircle(
-                center: Offset(pageConstraints.maxWidth / 2,
-                    pageConstraints.maxHeight / 2.4),
+                center:
+                    Offset(pageConstraints.maxWidth / 2, pageConstraints.maxHeight / 2.4),
                 radius: 125,
               ),
               onDetect: (capture) => captureCode(capture),

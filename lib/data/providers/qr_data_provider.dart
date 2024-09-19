@@ -1,8 +1,9 @@
 import '../models/qr_data_model.dart';
-import '../services/clients/_clients.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqlite_api.dart';
 import 'package:sqflite/sqflite.dart' as sql;
+
+import '../services/clients/_clients.dart';
 
 part 'qr_data_provider.g.dart';
 

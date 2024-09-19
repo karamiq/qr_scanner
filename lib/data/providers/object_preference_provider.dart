@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:app/data/shared_preference/shared_preferences_lib.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../common_lib.dart';
-import 'provider.dart';
 
 mixin ObjectPreferenceProvider<State> on AutoDisposeNotifier<State> {
   @protected

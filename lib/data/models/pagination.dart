@@ -1,4 +1,4 @@
-import "_models.dart";
+import '_models.dart';
 
 part 'pagination.freezed.dart';
 part 'pagination.g.dart';
@@ -12,7 +12,6 @@ class Pagination<T> with _$Pagination<T> {
     required List<T> items,
   }) = _Pagination<T>;
 
-  factory Pagination.fromJson(
-          Map<String, dynamic> json, FromJsonT<T> fromJsonT) =>
+  factory Pagination.fromJson(Map<String, dynamic> json, FromJsonT<T> fromJsonT) =>
       _$PaginationFromJson<T>(json, fromJsonT);
 }

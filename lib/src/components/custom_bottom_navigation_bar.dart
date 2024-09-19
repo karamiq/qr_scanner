@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../common_lib.dart';
 import 'bottom_navigatoin_item.dart';
+import '../../common_lib.dart';
 
 final currentPageIndexProvider = StateProvider<int>((ref) => 1);
 

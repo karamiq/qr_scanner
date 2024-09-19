@@ -3,7 +3,6 @@ import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-
 import '../../../common_lib.dart';
 import '../../../data/models/qr_data_model.dart';
 import '../../../data/models/qr_type_enum.dart';

@@ -3,8 +3,7 @@ import 'package:app/src/components/custom_bottom_navigation_bar.dart';
 import 'package:app/src/history/components/create_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../common_lib.dart';
+import '../../../common_lib.dart';
 import '../../utils/components/scaffold_decoration.dart';
 import 'components/scan_page.dart';
 

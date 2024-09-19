@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../common_lib.dart';
 import '../../../data/models/qr_type_enum.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../common_lib.dart';
 import '../../../data/models/qr_data_model.dart';
+import '../../../common_lib.dart';
 
 class DetailesListTile extends StatelessWidget {
   const DetailesListTile({

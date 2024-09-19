@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:saver_gallery/saver_gallery.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-
 import '../../common_lib.dart';
 import '../../data/models/qr_data_model.dart';
 import 'qr_icon_option.dart';
@@ -24,9 +23,17 @@ class OptionsRow extends StatelessWidget {
     if (uint8list != null) {
       final status = await Permission.storage.request();
       if (status.isGranted) {
-        final result =
-            await ImageGallerySaver.saveImage(uint8list, name: '${item.id}-qr-code');
-        if (result != null && result["isSuccess"]) {
+        String picturesPath = "${item.type}-${item.id}.png";
+
+        SaveResult? result = await SaverGallery.saveImage(
+          Uint8List.fromList(uint8list),
+          quality: 60,
+          name: picturesPath,
+          androidRelativePath: "Pictures/appName/$picturesPath",
+          androidExistNotSave: false,
+        );
+
+        if (result != null) {
           Utils.showSuccessSnackBar('Image saved successfully');
         } else {
           Utils.showErrorSnackBar('Failed to save image');

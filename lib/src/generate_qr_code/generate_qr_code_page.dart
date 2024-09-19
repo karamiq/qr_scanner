@@ -14,7 +14,6 @@ import 'package:app/utils/components/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:uuid/uuid.dart';
-
 import '../../data/models/qr_type_enum.dart';
 import '../../utils/components/custom_scaffold.dart';
 import '../components/show_qr_code_dialog.dart';
@@ -141,9 +140,10 @@ class GenerateQrCodePage extends HookConsumerWidget {
                               data: _qrData,
                               date: DateTime.now(),
                               type: type.name);
-                          showQrdataDialog(context, screenshotController, item);
                           // ignore: unused_result
                           ref.read(addQRDataProvider.notifier).addQRdata(item);
+                          context.pop();
+                          showQrdataDialog(context, screenshotController, item);
                         }
                       },
                       style: ElevatedButton.styleFrom(

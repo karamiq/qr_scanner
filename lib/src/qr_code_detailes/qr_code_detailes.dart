@@ -4,10 +4,10 @@ import 'package:app/utils/components/custom_app_bar.dart';
 import 'package:app/utils/components/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
-import '../../common_lib.dart';
 import '../components/options_row.dart';
 import 'components/detailse_list-tile.dart';
 import 'components/qr-code-image.dart';
+import '../../../common_lib.dart';
 
 class QrCodeDetailes extends HookWidget {
   const QrCodeDetailes({
@@ -21,6 +21,37 @@ class QrCodeDetailes extends HookWidget {
     final ScreenshotController screenshotController = ScreenshotController();
     ValueNotifier<bool> isLoading = useState<bool>(false);
     ValueNotifier<bool> isExpanded = useState<bool>(false);
+    Widget handleActionButton() {
+      dynamic button(text) => Align(
+            alignment: Alignment.center,
+            child: TextButton(
+                onPressed: () async {
+                  await launchApp(item.data);
+                },
+                child: Text(text)),
+          );
+      switch (handleQRCode(item.data)) {
+        case QRType.network:
+          return button('Connect');
+        case QRType.event:
+          return button('Add to events');
+        case QRType.website:
+        case QRType.whatsApp:
+        case QRType.twitter:
+        case QRType.email:
+        case QRType.instagram:
+        case QRType.phoneNumber:
+        case QRType.location:
+          return button('Open');
+        case QRType.contact:
+        case QRType.business:
+          return button('Add to Contacts');
+        case QRType.text:
+          return Container();
+        default:
+          return Container();
+      }
+    }
 
     return CustomScaffold(
         body: SingleChildScrollView(
@@ -66,9 +97,7 @@ class QrCodeDetailes extends HookWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            !isExpanded.value
-                                ? '${item.data.split('\n').first}...'
-                                : '',
+                            !isExpanded.value ? '${item.data.split('\n').first}...' : '',
                             style: const TextStyle(fontSize: 18),
                           ),
                         ),
@@ -84,21 +113,7 @@ class QrCodeDetailes extends HookWidget {
                     ),
                   ],
                 ),
-                Align(
-                  alignment: Alignment.center,
-                  child: TextButton(
-                    onPressed: isLoading.value
-                        ? null
-                        : () async {
-                            isLoading.value = true;
-                            await launchApp(item.data);
-                            isLoading.value = false;
-                          },
-                    child: isLoading.value
-                        ? const CircularProgressIndicator.adaptive()
-                        : const Text('Open'),
-                  ),
-                )
+                handleActionButton(),
               ],
             ),
           ),
@@ -107,6 +122,7 @@ class QrCodeDetailes extends HookWidget {
             item: item,
             screenshotController: screenshotController,
           ),
+          const Gap(Insets.extraSmall),
         ],
       ),
     ));

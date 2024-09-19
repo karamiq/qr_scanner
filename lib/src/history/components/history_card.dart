@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../../../common_lib.dart';
 import '../../../data/models/qr_data_model.dart';
 import '../../../data/providers/qr_data_provider.dart';

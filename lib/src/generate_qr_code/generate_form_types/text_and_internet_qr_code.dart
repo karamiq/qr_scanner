@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../common_lib.dart';
 
 class GenerateTextQRCode extends HookWidget {

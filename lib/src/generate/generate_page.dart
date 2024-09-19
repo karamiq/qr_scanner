@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../common_lib.dart';
 import '../../data/models/qr_type_enum.dart';
 import '../components/custom_bottom_navigation_bar.dart';
+import '../../common_lib.dart';
 
 class GeneratePage extends HookConsumerWidget {
   const GeneratePage({super.key});

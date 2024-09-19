@@ -4,7 +4,6 @@ import 'package:app/common_lib.dart';
 import 'package:app/src/components/qr_icon_option.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../data/services/clients/_clients.dart';
 import 'components/settings_option.dart';
 part 'settings_page.g.dart';

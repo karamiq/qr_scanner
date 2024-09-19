@@ -1,7 +1,9 @@
+// ignore_for_file: empty_catches
+import 'package:add_2_calendar/add_2_calendar.dart' as calender;
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:wifi_iot/wifi_iot.dart';
 import '../../common_lib.dart';
 
 enum QRType {
@@ -29,9 +31,45 @@ Future<void> launchApp(String data) async {
   final tt = type == QRType.contact ? 'contact' : 'business';
 
   switch (type) {
-    case QRType.website:
     case QRType.network:
+      try {
+        RegExp regExp = RegExp(r'S:([^;]+);P:([^;]+);');
+        Match? match = regExp.firstMatch(data);
+        String name = match?.group(1) ?? '';
+        String password = match?.group(2) ?? '';
+
+        bool isConnected = await WiFiForIoTPlugin.connect(
+          name,
+          password: password,
+          security: NetworkSecurity.WPA,
+          joinOnce: true,
+          withInternet: true,
+        );
+        if (isConnected) {
+          Utils.showNotificatonSnackBar("Connecting to $name");
+        } else {
+          Utils.showNotificatonSnackBar("Failed to connect");
+        }
+      } catch (e) {}
+      break;
     case QRType.event:
+      try {
+        final vCardData = extractVCardData(data);
+
+        final event = calender.Event(
+          title: vCardData['SUMMARY'] ?? '',
+          description: vCardData['DESCRIPTION'] ?? '',
+          location: vCardData['LOCATION'] ?? '',
+          startDate: DateTime.parse(vCardData['DTSTART'] ?? ''),
+          endDate: DateTime.parse(vCardData['DTEND'] ?? ''),
+          allDay: false,
+        );
+        final state = await calender.Add2Calendar.addEvent2Cal(event);
+        if (!state) {
+          Utils.showErrorSnackBar('Faild to add');
+        }
+      } catch (e) {}
+    case QRType.website:
     case QRType.whatsApp:
     case QRType.twitter:
     case QRType.email:
@@ -40,17 +78,12 @@ Future<void> launchApp(String data) async {
     case QRType.location:
       try {
         await launchUrl(Uri.parse(data));
-      } catch (e) {
-        // Handle error if needed
-        print('Error launching URL: $e');
-      }
+      } catch (e) {}
       break;
-
     case QRType.contact:
       try {
         final vCardData = extractVCardData(data);
         final state = await Permission.contacts.request();
-
         if (state.isGranted) {
           final contact = Contact(
             name: Name(
@@ -74,14 +107,11 @@ Future<void> launchApp(String data) async {
               Website(vCardData['URL'] ?? ''),
             ],
           );
-          await FlutterContacts.insertContact(contact);
-          Utils.showSuccessSnackBar('The $tt has been added to contacts');
+          await FlutterContacts.openExternalInsert(contact);
         } else {
           Utils.showErrorSnackBar('Permission to access contacts was denied');
         }
-      } catch (e) {
-        //
-      }
+      } catch (e) {}
       break;
     case QRType.business:
       try {
@@ -120,11 +150,8 @@ Future<void> launchApp(String data) async {
         } else {
           Utils.showErrorSnackBar('Permission to access contacts was denied');
         }
-      } catch (e) {
-        //
-      }
+      } catch (e) {}
       break;
-
     case QRType.text:
     default:
       return;
@@ -221,6 +248,8 @@ QRType handleQRCode(String qrCode) {
     return QRType.network;
   } else if (qrCode.startsWith('BEGIN:VCARD')) {
     return QRType.contact;
+  } else if (qrCode.startsWith('BEGIN:VEVENT')) {
+    return QRType.event;
   } else if (qrCode.startsWith('MECARD:')) {
     return QRType.business;
   } else if (qrCode.startsWith('geo:')) {

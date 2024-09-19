@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../common_lib.dart';
 import '../../../data/models/qr_data_model.dart';
 import 'history_card.dart';
+import '../../../common_lib.dart';
 
 class ScanPage extends StatelessWidget {
   const ScanPage({
