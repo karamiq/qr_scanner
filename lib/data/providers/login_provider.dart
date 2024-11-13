@@ -2,7 +2,6 @@ import 'package:app/data/models/authentication_model.dart';
 import 'package:app/data/providers/authentication_provider.dart';
 import 'package:app/data/services/clients/auth_client.dart';
 
-import '../models/_models.dart';
 import '../services/clients/_clients.dart';
 
 part 'login_provider.g.dart';

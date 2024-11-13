@@ -17,6 +17,7 @@ import 'package:vibration/vibration.dart';
 import '../components/custom_bottom_navigation_bar.dart';
 import '../generate/generate_page.dart';
 import '../history/history_page.dart';
+import 'components/cam_top_options.dart';
 import 'components/scan_spot.dart';
 
 class CameraPage extends StatefulHookConsumerWidget {
@@ -166,94 +167,17 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                   ? SafeArea(
                       child: Column(
                         children: [
-                          Container(
-                            margin: const EdgeInsets.all(20),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: Insets.medium, vertical: Insets.small),
-                            decoration: const BoxDecoration(
-                                color: Color(0xFF333333),
-                                borderRadius: BorderSize.extraSmallRadius),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                IconButton(
-                                  onPressed: selectImageFromGallery,
-                                  icon: const Icon(
-                                    Icons.photo_library,
-                                    color: Color(0xFFD9D9D9),
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: toggleFlash,
-                                  icon: Icon(
-                                    isFlashOn.value ? Icons.flash_on : Icons.flash_off,
-                                    color: isFlashOn.value
-                                        ? const Color(0xFFFFC107)
-                                        : const Color(0xFFD9D9D9),
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: flipCamera,
-                                  icon: Icon(
-                                    Icons.flip_camera_android,
-                                    color: !isFrontCamera.value
-                                        ? const Color(0xFFD9D9D9)
-                                        : const Color(0xFFFFC107),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          CamTopOptions(
+                              flipCamera: flipCamera,
+                              selectImageFromGallery: selectImageFromGallery,
+                              toggleFlash: toggleFlash,
+                              isFlashOn: isFlashOn,
+                              isFrontCamera: isFrontCamera),
                           const Gap(120),
                           const ScanSpot(),
-                          Gap(pageConstraints.maxHeight / 3),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0,
-                            ),
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    zoomLevel.value =
-                                        (zoomLevel.value - 0.1).clamp(0.0, 1.0);
-                                    cameraController.setZoomScale(zoomLevel.value);
-                                  },
-                                  icon: const Icon(
-                                    Icons.remove,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Slider(
-                                    value: zoomLevel.value,
-                                    min: 0.0,
-                                    max: 1.0,
-                                    divisions: 10,
-                                    label: '${(zoomLevel.value * 100).round()}% zoom',
-                                    thumbColor: const Color(0xFFFDB623),
-                                    activeColor: const Color(0xFFFDB623),
-                                    inactiveColor: Colors.white,
-                                    onChanged: (newZoom) {
-                                      zoomLevel.value = newZoom;
-                                      cameraController.setZoomScale(zoomLevel.value);
-                                    },
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    zoomLevel.value =
-                                        (zoomLevel.value + 0.1).clamp(0.0, 1.0);
-                                    cameraController.setZoomScale(zoomLevel.value);
-                                  },
-                                  icon: const Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          Gap(pageConstraints.maxHeight * .13),
+                          ZoomSlider(
+                              zoomLevel: zoomLevel, cameraController: cameraController),
                         ],
                       ),
                     )
@@ -283,6 +207,73 @@ class _CameraPageState extends ConsumerState<CameraPage> {
       }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: const ScanButton(),
+    );
+  }
+}
+
+class ZoomSlider extends StatelessWidget {
+  const ZoomSlider({
+    super.key,
+    required this.zoomLevel,
+    required this.cameraController,
+  });
+
+  final ValueNotifier<double> zoomLevel;
+  final MobileScannerController cameraController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20.0,
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () {
+              zoomLevel.value = (zoomLevel.value - 0.1).clamp(0.0, 1.0);
+              cameraController.setZoomScale(zoomLevel.value);
+            },
+            icon: const Icon(
+              Icons.remove,
+              color: Colors.white,
+            ),
+          ),
+          Expanded(
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                valueIndicatorTextStyle: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              child: Slider(
+                value: zoomLevel.value,
+                min: 0.0,
+                max: 1.0,
+                divisions: 10,
+                label: '${(zoomLevel.value * 100).round()}% zoom',
+                thumbColor: const Color(0xFFFDB623),
+                activeColor: const Color(0xFFFDB623),
+                inactiveColor: Colors.white,
+                onChanged: (newZoom) {
+                  zoomLevel.value = newZoom;
+                  cameraController.setZoomScale(zoomLevel.value);
+                },
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              zoomLevel.value = (zoomLevel.value + 0.1).clamp(0.0, 1.0);
+              cameraController.setZoomScale(zoomLevel.value);
+            },
+            icon: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

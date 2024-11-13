@@ -88,6 +88,7 @@ dependencies:
   saver_gallery: ^3.0.6
   wifi_iot: ^0.3.19+1
   add_2_calendar: ^3.0.1
+  in_app_purchase: ^3.2.0
 
   
 dev_dependencies:

@@ -1,5 +1,9 @@
+import 'dart:io';
+// Add this import for Uint8List
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:saver_gallery/saver_gallery.dart';
 import 'package:screenshot/screenshot.dart';
@@ -21,27 +25,23 @@ class OptionsRow extends StatelessWidget {
   Future<void> saveToGallery() async {
     Uint8List? uint8list = await screenshotController.capture();
     if (uint8list != null) {
-      final status = await Permission.storage.request();
+      final status = await Permission.manageExternalStorage.request();
       if (status.isGranted) {
-        String picturesPath = "${item.type}-${item.id}.png";
+        String picturesName = "${item.type}-${item.id}.png";
 
-        SaveResult? result = await SaverGallery.saveImage(
+        await SaverGallery.saveImage(
           Uint8List.fromList(uint8list),
           quality: 60,
-          name: picturesPath,
-          androidRelativePath: "Pictures/appName/$picturesPath",
+          name: picturesName,
           androidExistNotSave: false,
         );
-
-        if (result != null) {
-          Utils.showSuccessSnackBar('Image saved successfully');
-        } else {
-          Utils.showErrorSnackBar('Failed to save image');
-        }
       } else {
         Utils.showErrorSnackBar('Permission not granted');
       }
-    } else {}
+      Utils.showSuccessSnackBar('Image saved to gallery');
+    } else {
+      Utils.showErrorSnackBar('Failed to save image');
+    }
   }
 
   @override
@@ -53,16 +53,33 @@ class OptionsRow extends StatelessWidget {
         QRIconOption(
           icon: Icons.share,
           text: 'Share',
-          onPressed: () {
-            //Share the qr code with others
-            Share.share(item.data);
+          onPressed: () async {
+            // Capture the screenshot
+            Uint8List? uint8list = await screenshotController.capture();
+            if (uint8list != null) {
+              // Get the temporary directory
+              final directory = await getTemporaryDirectory();
+              final path = '${directory.path}/${item.type}-${item.id}.png';
+
+              // Save the captured image to the temporary directory
+              final file = File(path);
+              await file.writeAsBytes(uint8list);
+              // Create an XFile from the saved file
+              final xFile = XFile(file.path);
+              // Share the image file
+              await Share.shareXFiles(
+                [xFile],
+              );
+            } else {
+              Utils.showErrorSnackBar('Failed to capture screenshot');
+            }
           },
         ),
         QRIconOption(
           icon: Icons.file_copy,
           text: 'Copy',
           onPressed: () {
-            //copy the url
+            // Copy the URL
             Clipboard.setData(ClipboardData(text: item.data));
           },
         ),
