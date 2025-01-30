@@ -19,7 +19,7 @@ class QrCodeDetailes extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final ScreenshotController screenshotController = ScreenshotController();
-    ValueNotifier<bool> isLoading = useState<bool>(false);
+    useState<bool>(false);
     ValueNotifier<bool> isExpanded = useState<bool>(false);
     Widget handleActionButton() {
       dynamic button(text) => Align(

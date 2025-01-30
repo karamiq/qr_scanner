@@ -91,8 +91,6 @@ class GenerateQrCodePage extends HookConsumerWidget {
             type: type,
             onChange: (value) => _qrData = value,
           );
-        default:
-          return Container();
       }
     }
 
