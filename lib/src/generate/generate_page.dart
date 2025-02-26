@@ -75,7 +75,6 @@ class GeneratePage extends HookConsumerWidget {
                   ),
                 ],
               ),
-              const Gap(60),
               GridView.builder(
                 itemCount: qrTypes.length,
                 shrinkWrap: true,

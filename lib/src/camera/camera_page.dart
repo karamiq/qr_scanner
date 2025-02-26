@@ -173,9 +173,9 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                               toggleFlash: toggleFlash,
                               isFlashOn: isFlashOn,
                               isFrontCamera: isFrontCamera),
-                          const Gap(120),
+                          Gap(pageConstraints.maxHeight * .07),
                           const ScanSpot(),
-                          Gap(pageConstraints.maxHeight * .13),
+                          Gap(pageConstraints.maxHeight * .07),
                           ZoomSlider(
                               zoomLevel: zoomLevel, cameraController: cameraController),
                         ],
