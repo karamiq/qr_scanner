@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Last update:** 2025-06-
+**Last update:** 2025-06-29
 
 Thank you for using our QR Scanner app.
 
