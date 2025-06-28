@@ -39,15 +39,15 @@ class AppColors {
   static const Color black = Colors.black;
 
   // Opacity variants
-  static Color get backgroundWithOpacity => background.withOpacity(0.84);
-  static Color get backgroundLightWithOpacity => backgroundLight.withOpacity(0.84);
-  static Color get textPrimaryWithOpacity => textPrimary.withOpacity(0.34);
-  static Color get blackWithOpacity => black.withOpacity(0.63);
+  static Color get backgroundWithOpacity => background.withValues(alpha: 0.84);
+  static Color get backgroundLightWithOpacity => backgroundLight.withValues(alpha: 0.84);
+  static Color get textPrimaryWithOpacity => textPrimary.withValues(alpha: 0.34);
+  static Color get blackWithOpacity => black.withValues(alpha: 0.63);
 
   // Gradient colors
   static List<Color> get primaryGradient => [
         primary,
-        primary.withOpacity(0.3),
+        primary.withValues(alpha: 0.3),
       ];
 
   // Extension colors (for backward compatibility)
