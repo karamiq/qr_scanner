@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Centralized color management for the app
-///
-/// This class contains all the colors used throughout the app.
-/// To change the primary color or any other color, simply update the values here.
 class AppColors {
-  // Private constructor to prevent instantiation
   AppColors._();
 
   // Primary Colors
